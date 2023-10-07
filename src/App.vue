@@ -17,7 +17,7 @@ const reloadServices = () => {
   serviceError.value = false
   services.value = []
   axios
-    .get('http://rl-stock.local:8000/')
+    .get('https://rl-stock.local:8000/')
     .then((res) => {
       // response is json
       const data = res.data
