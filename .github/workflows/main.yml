@@ -30,6 +30,10 @@ jobs:
           npm install
           npm run build
 
+      - name: Copy index.html to 404.html
+        run: |
+          cp dist/index.html dist/404.html
+
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@releases/v4
         with:
