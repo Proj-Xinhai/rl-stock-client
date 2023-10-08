@@ -102,14 +102,16 @@ watch (state, () => {
 </script>
 
 <template>
-  <div class="ts-header is-huge has-cursor-pointer" @click="route.push({ name: 'task', params: { name: work.task_name } })">{{ work.task_name }}</div>
+  <div class="ts-header is-huge">
+    <span class="has-cursor-pointer" @click="route.push({ name: 'task', params: { name: work.task_name } })">{{ work.task_name }}</span>
+  </div>
   <span class="ts-text is-code">#{{ work.id }}</span>
 
   <div class="ts-timeline u-top-spaced">
     <template v-for="timeline in work.timeline" :key="timeline.name">
-      <div class="item" :class="{ 'is-negative': timeline.status == -1 || (timeline.status == 1 && work.status == -1)}">
+      <div class="item" :class="{ 'is-negative': timeline.status == -1 }">
         <div class="aside" style="width: 100px">
-          <div class="ts-text is-description" v-if="timeline.from !== 0 && !(timeline.status == 1 && work.status == -1)">
+          <div class="ts-text is-description" v-if="timeline.from !== 0">
             <span v-if="timeline.to == 0">{{ convertTime((now - timeline.from)) }}</span>
             <span v-else>{{ convertTime(timeline.to - timeline.from) }}</span>
           </div>
@@ -117,18 +119,17 @@ watch (state, () => {
         <div class="indicator">
           <span class="ts-icon"
                 :class="{
-            'is-xmark-icon': timeline.status == -1 || (timeline.status == 1 && work.status == -1),
+            'is-xmark-icon': timeline.status == -1,
             'is-plus-icon': timeline.status == 0,
-            'is-spinning is-spinner-icon': timeline.status == 1 && work.status !== -1,
+            'is-spinning is-spinner-icon': timeline.status == 1,
             'is-check-icon': timeline.status == 2 }"></span>
         </div>
         <div class="content">
           {{ timeline.name }} <span class="ts-icon is-arrows-rotate-icon has-cursor-pointer" :class="{ 'is-spinning': scalarLoading }" @click="reloadScalar"></span>
-          <div class="ts-box u-top-spaced" v-if="timeline.status == 1 && work.status == -1">
+          <div class="ts-box u-top-spaced" v-if="timeline.status == -1">
             <div class="ts-content is-tertiary">
               <div class="ts-text is-negative">
                 {{ timeline.detail }}
-                {{ work.detail }}
               </div>
             </div>
           </div>
@@ -141,9 +142,6 @@ watch (state, () => {
               </div>
             </div>
           </details>
-          <div class="ts-content is-rounded is-secondary has-top-spaced" v-if="timeline.detail != ''">
-            {{ timeline.detail }}
-          </div>
         </div>
       </div>
     </template>
