@@ -42,15 +42,15 @@ export type State = {
   helpers: Helper[]
 }
 
-export type Scaler = {
+export type Scalar = {
   tag: string
   step: number[]
   value: number[]
 }
 
-export type ScalerGroup = {
+export type ScalarGroup = {
   group: string
-  data: Scaler[]
+  data: Scalar[]
 }
 
 export type Algorithm = {
