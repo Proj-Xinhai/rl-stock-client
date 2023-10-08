@@ -4,6 +4,7 @@ import axios from 'axios'
 import ThePlaceholder from './components/ThePlaceholder.vue'
 import { onBeforeMount, onMounted, ref, watch } from 'vue'
 import { state, socket } from '@/socket'
+import { io } from 'socket.io-client'
 
 // data
 const services = ref<string[]>([])
@@ -16,27 +17,28 @@ const ping = ref<number>(0)
 const reloadServices = () => {
   serviceError.value = false
   services.value = []
-  axios
-    .get('https://rl-stock.local:8000/')
-    .then((res) => {
-      // response is json
-      const data = res.data
-      if (data['status'] == 'ok') {
-        console.log(data['services'])
-        services.value = data['services']
-      } else {
-        throw new Error('status not ok')
-      }
+
+  // namespace /service
+  const temp_socket = io('ws://rl-stock.local:8000/service', {
+    transports: ['websocket'],
+    secure: true,
+    rejectUnauthorized: false
+  })
+
+  temp_socket.on('connect', () => {
+    console.log('connected')
+    temp_socket.emit('get_services', (data: string[]) => {
+      console.log(data)
+      services.value = data
+      temp_socket.disconnect()
     })
-    .catch((err) => {
-      console.log(err)
-    })
-    .finally(() => {
-      if (services.value.length == 0) {
-        serviceError.value = true
-      }
-      console.log('finally')
-    })
+  })
+
+  temp_socket.on('connect_error', (err) => {
+    console.log('connect_error')
+    console.log(err)
+    serviceError.value = true
+  })
 }
 
 const setService = (service: string) => {
@@ -57,7 +59,9 @@ onBeforeMount(() => {
 })
 
 onMounted(() => {
-  reloadServices()
+  if (currentService.value == '') {
+    reloadServices()
+  }
   ping.value = state.ping
 })
 
