@@ -68,7 +68,7 @@ onMounted(() => {
 watch(currentService, (newVal: string) => {
   if (newVal !== '') {
     // @ts-ignore
-    socket.io.uri = `wss://${newVal}:8000/`
+    socket.io.uri = `ws://${newVal}:8000/`
     socket.connect()
   } else {
     socket.disconnect()
