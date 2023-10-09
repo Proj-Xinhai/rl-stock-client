@@ -63,6 +63,7 @@ onMounted(() => {
     reloadServices()
   }
   ping.value = state.ping
+
 })
 
 watch(currentService, (newVal: string) => {

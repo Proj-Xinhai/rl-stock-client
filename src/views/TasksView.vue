@@ -2,19 +2,19 @@
 import { state, socket, type Task } from "@/socket"
 import { onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import TheConfirm from "@/components/TheConfirm.vue"
 
 const route = useRouter()
 
 const tasks = ref<Task[]>([])
+const confirm = ref<string>('')
 
 const removeTask = (name: string) => {
-  console.log(name)
+  state.loading = true
   socket.emit('remove_task', name, (status: boolean, msg: string, detail: string) => {
-    if (status) {
-      state.tasks = state.tasks.filter((task) => task.name != name)
-    } else {
-      alert(`remove task ${name} failed: ${detail}`)
-    }
+    if (!status) alert(`${msg}: remove task ${name} failed: ${detail}`)
+    confirm.value = ''
+    state.loading = false
   })
 }
 
@@ -104,31 +104,20 @@ watch (state, (newVal) => {
               </div>
               <div class="column is-fluid is-end-aligned">
                 <router-link class="ts-text is-link" :to="{ name: 'task', params: { name: task.name }}">manage</router-link>
-                <a class="ts-text is-link has-cursor-pointer" @click="removeTask(task.name)">remove</a>
+                <a class="ts-text is-link has-cursor-pointer" @click="confirm = task.name">remove</a>
               </div>
             </div>
           </td>
         </tr>
       </template>
-      <!--
-      <tr>
-        <td>RecurrentPPO_SMA_1</td>
-        <td>September 30, 2023</td>
-      </tr>
-      <tr class="is-indicated">
-        <td>RecurrentPPO_SMA_1</td>
-        <td>September 30, 2023</td>
-      </tr>
-      <tr class="is-positive is-indicated">
-        <td>RecurrentPPO_SMA_1</td>
-        <td>September 30, 2023</td>
-      </tr>
-      <tr class="is-negative is-indicated">
-        <td>RecurrentPPO_SMA_1</td>
-        <td>September 30, 2023</td>
-      </tr>
-      -->
       </tbody>
     </table>
   </div>
+  <TheConfirm title="Confirm removal"
+              accent="negative"
+              :message="`You are about to remove task \`${confirm}\``"
+              :check="confirm"
+              :confirm="() => removeTask(confirm)"
+              :cancel="() => confirm = ''"
+              v-if="confirm !== ''" />
 </template>
