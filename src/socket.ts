@@ -1,5 +1,6 @@
 import { reactive } from 'vue'
 import { io } from 'socket.io-client'
+import Axios from 'axios'
 
 export type Task = {
   name: string
@@ -103,6 +104,20 @@ socket.on('connect', () => {
 
 socket.on('disconnect', () => {
   state.connected = false
+})
+
+socket.on('git_version', (hash) => {
+  if (hash !== undefined) {
+    Axios.get(`https://api.github.com/repos/Proj-Xinhai/rl-stock/commits?per_page=1`).then((res) => {
+      if (res.data[0].sha !== hash) {
+        alert('Warning: The server has been updated, please update it to the latest version.')
+      } else {
+        console.log('Server is up to date.')
+      }
+    })
+  } else {
+    alert('Warning: it is strongly recommended to update the server by running `git pull` in the server directory.')
+  }
 })
 
 socket.on('update_tasks', (tasks) => {
