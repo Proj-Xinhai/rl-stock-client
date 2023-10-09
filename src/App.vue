@@ -86,7 +86,7 @@ watch(state, (newVal) => {
 
 <template>
   <div class="ts-app-layout is-full is-horizontal" v-if="currentService != ''">
-    <div class="cell has-dark" style="width: 360px; color: var(--ts-white)">
+    <div class="cell" style="width: 360px; color: var(--ts-white)">
       <div class="ts-content is-center-aligned">
         <div class="ts-wrap is-vertical is-compact is-middle-aligned">
           <div class="ts-grid is-middle-aligned">
@@ -156,7 +156,7 @@ watch(state, (newVal) => {
       </div>
     </div>
   </div>
-  <div class="ts-modal" v-bind:class="currentService == '' ? 'is-visible' : ''">
+  <div class="ts-modal" style="color: var(--ts-white)" v-bind:class="currentService == '' ? 'is-visible' : ''">
     <div class="content">
       <div class="ts-content">
         <div class="ts-grid is-middle-aligned">
