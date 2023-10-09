@@ -29,6 +29,7 @@ export type Work = {
   status: number
   detail: string
   timeline: Timeline[]
+  evaluation: { [key: string]: string }[]
   date: string
 }
 

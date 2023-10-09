@@ -26,6 +26,7 @@ const work = ref<Work>({
   status: 0,
   detail: '',
   timeline: [],
+  evaluation: [],
   date: ''
 })
 const now = ref<number>(Date.now() / 1000)
@@ -155,7 +156,24 @@ watch (state, () => {
             'is-spinning is-spinner-icon': work.status == 1,
             'is-check-icon': work.status == 2 }"></span>
       </div>
-      <div class="content"><span class="ts-text" :class="{ 'is-negative': work.status == -1}">{{ work.detail }}</span></div>
+      <div class="content">
+        <span class="ts-text" :class="{ 'is-negative': work.status == -1}">{{ work.detail }}</span>
+        <div class="ts-box u-top-spaced" v-if="work.evaluation.length != 0">
+          <table class="ts-table is-striped is-celled">
+            <thead>
+              <tr>
+                <th colspan="2">evaluation</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="item in work.evaluation" :key="item.name">
+                <td class="is-collapsed">{{ item.name }}</td>
+                <td>{{ item.value }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
   <div class="ts-space is-big"></div>
