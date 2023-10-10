@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onBeforeUnmount, ref } from "vue";
+import { onMounted, ref } from "vue";
 import { template } from "@/ploty"
 import { VuePlotly } from '@clalarco/vue3-plotly'
 import Plotly from 'plotly.js-basic-dist'

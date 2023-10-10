@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { state, socket, type Task, type Work, type ScalarGroup } from '@/socket'
+import { state, type Task, type Work } from '@/socket'
 import { onMounted, ref, watch } from 'vue'
 import { onBeforeRouteLeave, useRouter } from "vue-router"
 import TheScalars from "@/components/TheScalars.vue"
@@ -42,11 +42,13 @@ const updateNow = setInterval(() => {
 }, 1000)
 
 const convertTime = (seconds: number) => {
+  const zeroPad = (num: number) => String(num).padStart(2, '0')
+
   const sec = Math.floor(seconds % 60)
   const min = Math.floor((seconds / 60) % 60)
   const hour = Math.floor((seconds / 60 / 60) % 24)
 
-  return `${hour}h ${min}m ${sec}s`
+  return `${zeroPad(hour)}h ${zeroPad(min)}m ${zeroPad(sec)}s`
 }
 
 onMounted(() => {
