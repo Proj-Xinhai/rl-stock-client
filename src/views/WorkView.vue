@@ -2,8 +2,7 @@
 import { state, socket, type Task, type Work, type ScalarGroup } from '@/socket'
 import { onMounted, ref, watch } from 'vue'
 import { onBeforeRouteLeave, useRouter } from "vue-router"
-import { template } from "@/ploty"
-import { VuePlotly } from '@clalarco/vue3-plotly'
+import TheScalars from "@/components/TheScalars.vue"
 
 const route = useRouter()
 
@@ -30,12 +29,6 @@ const work = ref<Work>({
   date: ''
 })
 const now = ref<number>(Date.now() / 1000)
-const scalars = ref<{ [index: string]: ScalarGroup[] }>({})
-const scalarLoading = ref<boolean>(false)
-
-const updateNow = setInterval(() => {
-  now.value = Date.now() / 1000
-}, 1000)
 
 const load = () => {
   if (state.tasks.length != 0 && state.works.length != 0) {
@@ -44,40 +37,9 @@ const load = () => {
   }
 }
 
-const reloadScalar = () => {
-
-  scalarLoading.value = true
-  const args = {
-    uuid: route.currentRoute.value.params.id,
-    // ignores: <{ [ key: string ]: { [ key: string ]: number } }>{
-    //   train: {},
-    //   test: {}
-    // }
-  }
-
-  /*
-  if (scalars.value.train !== undefined) {
-    for (let group of scalars.value.train) {
-      for (let scalar of group.data) {
-        args.ignores.train[scalar.tag] = <number>scalar.step.at(-1)
-      }
-    }
-  }
-
-  if (scalars.value.test !== undefined) {
-    for (let group of scalars.value.test) {
-      for (let scalar of group.data) {
-        args.ignores.test[scalar.tag] = <number>scalar.step.at(-1)
-      }
-    }
-  }
-   */
-
-  socket.emit("get_scalar", args, (data: {}) => {
-    scalars.value = <{ train: ScalarGroup[], test: ScalarGroup[] }>data
-    scalarLoading.value = false
-  })
-}
+const updateNow = setInterval(() => {
+  now.value = Date.now() / 1000
+}, 1000)
 
 const convertTime = (seconds: number) => {
   const sec = Math.floor(seconds % 60)
@@ -89,7 +51,6 @@ const convertTime = (seconds: number) => {
 
 onMounted(() => {
   load()
-  reloadScalar()
 })
 
 onBeforeRouteLeave((to, from, next) => {
@@ -126,7 +87,7 @@ watch (state, () => {
             'is-check-icon': timeline.status == 2 }"></span>
         </div>
         <div class="content">
-          {{ timeline.name }} <span class="ts-icon is-arrows-rotate-icon has-cursor-pointer" :class="{ 'is-spinning': scalarLoading }" @click="reloadScalar"></span>
+          {{ timeline.name }} <!--<span class="ts-icon is-arrows-rotate-icon has-cursor-pointer" :class="{ 'is-spinning': scalarLoading }" @click="reloadScalar"></span>-->
           <div class="ts-box u-top-spaced" v-if="timeline.status == -1">
             <div class="ts-content is-tertiary">
               <div class="ts-text is-negative">
@@ -134,15 +95,7 @@ watch (state, () => {
               </div>
             </div>
           </div>
-          <details class="ts-accordion u-top-spaced" v-for="group in scalars[<string>timeline.name]" :key="group.group">
-            <summary>{{ group.group }}</summary>
-            <div class="ts-box u-top-spaced" v-for="scalar in group.data" :key="scalar.tag">
-              <div class="ts-content is-fitted">
-                <VuePlotly :data="[{x: scalar.step, y: scalar.value}]" :layout="{template: template, title: scalar.tag }" />
-                <div id="test"></div>
-              </div>
-            </div>
-          </details>
+          <TheScalars :uuid="<string>route.currentRoute.value.params.id" :timeline="timeline.name" />
         </div>
       </div>
     </template>
