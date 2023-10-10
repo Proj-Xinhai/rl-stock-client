@@ -21,8 +21,6 @@ const reloadServices = () => {
   // namespace /service
   const temp_socket = io('ws://rl-stock.local:8000/service', {
     transports: ['websocket'],
-    secure: true,
-    rejectUnauthorized: false
   })
 
   temp_socket.on('connect', () => {
