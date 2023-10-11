@@ -64,6 +64,35 @@ const createTask = () => {
   })
 }
 
+const importTask = () => {
+  const input = document.createElement('input')
+  input.type = 'file'
+  input.accept = '.json'
+  input.onchange = (e: Event) => {
+    const target = e.target as HTMLInputElement
+    if (target.files != null) {
+      const file = target.files[0]
+      const reader = new FileReader()
+      reader.readAsText(file)
+      reader.onload = () => {
+        const data = JSON.parse(reader.result as string)
+        name.value = data.name
+        algorithm.value = data.algorithm
+        algorithm_args.value = []
+        learn_args.value = []
+        for (const key in data.algorithm_args) {
+          algorithm_args.value.push({key: key, value: data.algorithm_args[key]})
+        }
+        for (const key in data.learn_args) {
+          learn_args.value.push({key: key, value: data.learn_args[key]})
+        }
+        helper.value = data.helper
+      }
+    }
+  }
+  input.click()
+}
+
 onMounted(() => {
   loadOptions()
 })
@@ -74,7 +103,7 @@ watch (state, () => {
 </script>
 
 <template>
-  <div class="ts-header is-huge u-bottom-spaced-big">Create Task</div>
+  <div class="ts-header is-huge u-bottom-spaced-big">Create Task <button class="ts-button is-outlined has-start-spaced" @click="importTask">Import</button></div>
   <div class="ts-notice is-negative u-bottom-spaced" v-show="createError != ''">
     <div class="title">Error</div>
     <div class="content">{{ createError }}</div>

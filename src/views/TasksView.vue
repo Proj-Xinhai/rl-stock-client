@@ -18,6 +18,21 @@ const removeTask = (name: string) => {
   })
 }
 
+const exportTask = (name: string) => {
+  state.loading = true
+  socket.emit('export_task', name, (data: Task) => {
+    state.loading = false
+    const blob = new Blob([JSON.stringify(data)], { type: 'application/json' })
+    const url = window.URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `${name}.json`
+    a.click()
+    window.URL.revokeObjectURL(url)
+    state.loading = false
+  })
+}
+
 onMounted(() => {
   tasks.value = state.tasks
   tasks.value.sort((a, b) => {
@@ -105,6 +120,7 @@ watch (state, (newVal) => {
               <div class="column is-fluid is-end-aligned">
                 <router-link class="ts-text is-link" :to="{ name: 'task', params: { name: task.name }}">manage</router-link>
                 <a class="ts-text is-link has-cursor-pointer" @click="confirm = task.name">remove</a>
+                <a class="ts-text is-link has-cursor-pointer" @click="exportTask(task.name)">export</a>
               </div>
             </div>
           </td>
