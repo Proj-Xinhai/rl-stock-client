@@ -58,9 +58,9 @@ onBeforeMount(() => {
 
 onMounted(() => {
   // force http
-  if (location.protocol !== 'http:') {
-    location.replace(`http:${location.href.substring(location.protocol.length)}`)
-  }
+  // if (location.protocol !== 'http:') {
+  //   location.replace(`http:${location.href.substring(location.protocol.length)}`)
+  // }
 
   if (currentService.value == '') {
     reloadServices()
