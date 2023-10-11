@@ -57,11 +57,15 @@ onBeforeMount(() => {
 })
 
 onMounted(() => {
+  // force http
+  if (location.protocol !== 'http:') {
+    location.replace(`http:${location.href.substring(location.protocol.length)}`)
+  }
+
   if (currentService.value == '') {
     reloadServices()
   }
   ping.value = state.ping
-
 })
 
 watch(currentService, (newVal: string) => {
