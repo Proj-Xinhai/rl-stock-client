@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
-import axios from 'axios'
 import ThePlaceholder from './components/ThePlaceholder.vue'
 import { onBeforeMount, onMounted, ref, watch } from 'vue'
 import { state, socket } from '@/socket'
@@ -58,9 +57,9 @@ onBeforeMount(() => {
 
 onMounted(() => {
   // force http
-  // if (location.protocol !== 'http:') {
-  //   location.replace(`http:${location.href.substring(location.protocol.length)}`)
-  // }
+  if (location.protocol !== 'http:') {
+    location.replace(`http:${location.href.substring(location.protocol.length)}`)
+  }
 
   if (currentService.value == '') {
     reloadServices()
