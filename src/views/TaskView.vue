@@ -6,7 +6,7 @@ import Papa from 'papaparse'
 import TheTaskExporter from "@/components/TheTaskExporter.vue"
 import TheTaskCopier from "@/components/TheTaskCopier.vue"
 
-const route = useRouter()
+const router = useRouter()
 
 const task = ref<Task>({
   name: '',
@@ -42,7 +42,7 @@ const status: { [key: string]: string } = {
 
 const loadTask = () => {
   if (state.tasks.length != 0) {
-    task.value = state.tasks.find(({name}) => name == route.currentRoute.value.params.name) as Task
+    task.value = state.tasks.find(({name}) => name == router.currentRoute.value.params.name) as Task
     task_name.value = task.value.name
     algorithm.value = task.value.args.algorithm
     algorithm_args.value = task.value.args.algorithm_args
@@ -66,7 +66,7 @@ const createWork = () => {
     num_work: num_work.value
   }, (status: boolean, msg: string, detail: string) => {
     if (status) {
-      // route.push({ name: 'works' })
+      // router.push({ name: 'works' })
       view_modal.value = false
     } else {
       alert(`create work failed: ${detail}`)
@@ -152,7 +152,7 @@ watch (state, () => {
       </thead>
       <tbody>
       <template v-for="work in works" :key="work.id">
-        <tr class="has-cursor-pointer" @click="route.push({ name: 'work', params: { id: work.id } })">
+        <tr class="has-cursor-pointer" @click="router.push({ name: 'work', params: { id: work.id } })">
           <td class="is-center-aligned">{{ work.id }}</td>
           <td>{{ work.task_name }}</td>
           <td class="is-center-aligned"

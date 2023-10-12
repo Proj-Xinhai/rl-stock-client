@@ -3,7 +3,7 @@ import { state, type Task, type Work } from "@/socket"
 import { onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
-const route = useRouter()
+const router = useRouter()
 
 const tasks = ref<Task[]>([])
 const works = ref<Work[]>([])
@@ -48,7 +48,7 @@ watch (state, () => {
       </thead>
       <tbody>
       <template v-for="work in works" :key="work.id">
-        <tr class="has-cursor-pointer" @click="route.push({ name: 'work', params: { id: work.id } })">
+        <tr class="has-cursor-pointer" @click="router.push({ name: 'work', params: { id: work.id } })">
           <td class="is-center-aligned">{{ work.id }}</td>
           <td>{{ work.task_name }}</td>
           <td class="is-center-aligned"

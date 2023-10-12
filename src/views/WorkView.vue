@@ -4,7 +4,7 @@ import { onMounted, ref, watch } from 'vue'
 import { onBeforeRouteLeave, useRouter } from "vue-router"
 import TheScalars from "@/components/TheScalars.vue"
 
-const route = useRouter()
+const router = useRouter()
 
 const task = ref<Task>({
   name: '',
@@ -32,8 +32,8 @@ const now = ref<number>(Date.now() / 1000)
 
 const load = () => {
   if (state.tasks.length != 0 && state.works.length != 0) {
-    task.value = state.tasks.find(({name}) => name == route.currentRoute.value.params.name) as Task
-    work.value = state.works.find(({id}) => id == route.currentRoute.value.params.id) as Work
+    task.value = state.tasks.find(({name}) => name == router.currentRoute.value.params.name) as Task
+    work.value = state.works.find(({id}) => id == router.currentRoute.value.params.id) as Work
   }
 }
 
@@ -67,7 +67,7 @@ watch (state, () => {
 
 <template>
   <div class="ts-header is-huge">
-    <span class="has-cursor-pointer" @click="route.push({ name: 'task', params: { name: work.task_name } })">{{ work.task_name }}</span>
+    <span class="has-cursor-pointer" @click="router.push({ name: 'task', params: { name: work.task_name } })">{{ work.task_name }}</span>
   </div>
   <span class="ts-text is-code">#{{ work.id }}</span>
 
@@ -97,7 +97,7 @@ watch (state, () => {
               </div>
             </div>
           </div>
-          <TheScalars :uuid="<string>route.currentRoute.value.params.id" :timeline="timeline.name" />
+          <TheScalars :uuid="<string>router.currentRoute.value.params.id" :timeline="timeline.name" />
         </div>
       </div>
     </template>

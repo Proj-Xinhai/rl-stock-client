@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { state, socket, type Algorithm, type Helper, type Task } from '@/socket'
+import { state, socket, type Algorithm, type Helper } from '@/socket'
 import { watch, ref, onMounted } from "vue"
 import { useRouter, useRoute } from 'vue-router'
 import TheTaskImporter from "@/components/TheTaskImporter.vue"

@@ -5,7 +5,7 @@ import { useRouter } from 'vue-router'
 import TheConfirm from "@/components/TheConfirm.vue"
 import TheTaskExporter from "@/components/TheTaskExporter.vue"
 
-const route = useRouter()
+const router = useRouter()
 
 const tasks = ref<Task[]>([])
 const confirm = ref<string>('')
@@ -90,7 +90,7 @@ watch (state, (newVal) => {
       </thead>
       <tbody>
       <template v-for="task in tasks" :key="task.name">
-        <tr class="has-cursor-pointer" :data-toggle="task.name+':has-hidden'" @dblclick="route.push({ name: 'task', params: { name: task.name } })">
+        <tr class="has-cursor-pointer" :data-toggle="task.name+':has-hidden'" @dblclick="router.push({ name: 'task', params: { name: task.name } })">
           <td>{{ task.name }}</td>
           <td>{{ task.args.algorithm }}</td>
           <td>{{ task.date }}</td>

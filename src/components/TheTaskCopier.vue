@@ -6,10 +6,10 @@ const props = defineProps<{
   wrapper: 'link' | 'button'
 }>()
 
-const route = useRouter()
+const router = useRouter()
 
 const copyTask = () => {
-  route.push({
+  router.push({
     name: 'task-create',
     query: {
       copy: props.taskName
