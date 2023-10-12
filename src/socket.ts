@@ -7,8 +7,8 @@ export type Task = {
   args: {
     name: string
     algorithm: string
-    algorithm_args: string
-    learn_args: string
+    algorithm_args: { [ key: string]: string }[]
+    learn_args: { [ key: string]: string }[]
     helper: string
   }
   date: string

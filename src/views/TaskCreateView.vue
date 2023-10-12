@@ -74,11 +74,22 @@ const createTask = () => {
   })
 }
 
+const copyTask = () => {
+  // state.tasks
+  const task = state.tasks.find((task) => task.name == route.query.copy)
+  if (task) {
+    name.value = task.name
+    algorithm.value = task.args.algorithm
+    algorithm_args.value = []
+    learn_args.value = []
+
+    helper.value = task.args.helper
+  }
+}
+
 onMounted(() => {
   loadOptions()
-  if (route.query.copy) {
-    console.log("copy")
-  }
+  if (route.query.copy) copyTask()
 })
 
 watch (state, () => {
