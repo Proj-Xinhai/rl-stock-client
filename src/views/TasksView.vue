@@ -4,6 +4,7 @@ import { onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import TheConfirm from "@/components/TheConfirm.vue"
 import TheTaskExporter from "@/components/TheTaskExporter.vue"
+import TheTaskCopier from "@/components/TheTaskCopier.vue"
 
 const router = useRouter()
 
@@ -107,6 +108,7 @@ watch (state, (newVal) => {
                 <router-link class="ts-text is-link" :to="{ name: 'task', params: { name: task.name }}">manage</router-link>
                 <a class="ts-text is-link has-cursor-pointer" @click="confirm = task.name">remove</a>
                 <TheTaskExporter :taskName="task.name" wrapper="link" />
+                <TheTaskCopier :task-name="task.name" wrapper="link" />
               </div>
             </div>
           </td>
