@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { state, type Task, type Work } from '@/socket'
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, ref, watch, nextTick } from 'vue'
 import { onBeforeRouteLeave, useRouter } from "vue-router"
 import TheScalars from "@/components/TheScalars.vue"
 
@@ -11,8 +11,8 @@ const task = ref<Task>({
   args: {
     name: '',
     algorithm: '',
-    algorithm_args: '',
-    learn_args: '',
+    algorithm_args: {},
+    learn_args: {},
     helper: ''
   },
   date: '',
@@ -30,11 +30,20 @@ const work = ref<Work>({
 })
 const now = ref<number>(Date.now() / 1000)
 
+const renderScalars = ref<boolean>(true)
+
 const load = () => {
   if (state.tasks.length != 0 && state.works.length != 0) {
     task.value = state.tasks.find(({name}) => name == router.currentRoute.value.params.name) as Task
     work.value = state.works.find(({id}) => id == router.currentRoute.value.params.id) as Work
   }
+}
+
+const refresh = async () => {
+  console.log('refresh')
+  renderScalars.value = false
+  await nextTick()
+  renderScalars.value = true
 }
 
 const updateNow = setInterval(() => {
@@ -66,6 +75,9 @@ watch (state, () => {
 </script>
 
 <template>
+  <div style="position: fixed; top: 0; right: 0;">
+    <button class="ts-button is-circular is-outlined u-spaced-big" @click="refresh">refresh</button>
+  </div>
   <div class="ts-header is-huge">
     <span class="has-cursor-pointer" @click="router.push({ name: 'task', params: { name: work.task_name } })">{{ work.task_name }}</span>
   </div>
@@ -97,7 +109,7 @@ watch (state, () => {
               </div>
             </div>
           </div>
-          <TheScalars :uuid="<string>router.currentRoute.value.params.id" :timeline="timeline.name" />
+          <TheScalars :uuid="<string>router.currentRoute.value.params.id" :timeline="timeline.name" v-if="renderScalars" />
         </div>
       </div>
     </template>

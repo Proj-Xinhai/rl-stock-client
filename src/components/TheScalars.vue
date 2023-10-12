@@ -46,7 +46,7 @@ onMounted(() => {
           :layout="{template: template, title: scalar.tag }"
           :config="{ modeBarButtonsToAdd: [
             {
-              name: 'update',
+              name: 'refresh',
               icon: Plotly.Icons.undo,
               click: reloadScalar
             }
