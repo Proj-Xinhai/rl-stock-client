@@ -1,24 +1,14 @@
 <script setup lang="ts">
-import { state, socket, type Task } from "@/socket"
+import { state, type Task } from "@/socket"
 import { onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import TheConfirm from "@/components/TheConfirm.vue"
 import TheTaskExporter from "@/components/TheTaskExporter.vue"
 import TheTaskCopier from "@/components/TheTaskCopier.vue"
+import TheTaskRemover from "@/components/TheTaskRemover.vue";
 
 const router = useRouter()
 
 const tasks = ref<Task[]>([])
-const confirm = ref<string>('')
-
-const removeTask = (name: string) => {
-  state.loading = true
-  socket.emit('remove_task', name, (status: boolean, msg: string, detail: string) => {
-    if (!status) alert(`${msg}: remove task ${name} failed: ${detail}`)
-    confirm.value = ''
-    state.loading = false
-  })
-}
 
 onMounted(() => {
   tasks.value = state.tasks
@@ -107,6 +97,7 @@ watch (state, (newVal) => {
               <div class="column is-fluid is-end-aligned">
                 <router-link class="ts-text is-link" :to="{ name: 'task', params: { name: task.name }}">manage</router-link>
                 <a class="ts-text is-link has-cursor-pointer" @click="confirm = task.name">remove</a>
+                <TheTaskRemover :task-name="task.name" wrapper="link" />
                 <TheTaskExporter :taskName="task.name" wrapper="link" />
                 <TheTaskCopier :task-name="task.name" wrapper="link" />
               </div>
@@ -117,11 +108,4 @@ watch (state, (newVal) => {
       </tbody>
     </table>
   </div>
-  <TheConfirm title="Confirm removal"
-              accent="negative"
-              :message="`You are about to remove task \`${confirm}\``"
-              :check="confirm"
-              :confirm="() => removeTask(confirm)"
-              :cancel="() => confirm = ''"
-              v-if="confirm !== ''" />
 </template>
