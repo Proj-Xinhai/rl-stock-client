@@ -1,0 +1,1 @@
+import{_ as e}from"./_plugin-vue_export-helper-c27b6911.js";import{o as t,c}from"./index-172358f3.js";const o={},r={class:"ts-content is-tertiary"};function s(n,a){return t(),c("div",r)}const f=e(o,[["render",s]]);export{f as default};
