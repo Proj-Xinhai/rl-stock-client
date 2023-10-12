@@ -16,6 +16,8 @@ const algorithm_args = ref<{[ key: string]: string }[]>([])
 const learn_args = ref<{[ key: string]: string }[]>([])
 const helper = ref<string>('')
 
+let leave_lock = true
+
 const parentWrapper = {
   name: name,
   algorithm: algorithm,
@@ -67,6 +69,7 @@ const createTask = () => {
   }, (status: boolean, msg: string, detail: string) => {
     state.loading = false
     if (status) {
+      leave_lock = false
       router.push({ name: 'tasks' })
     } else {
       createError.value = `${msg}: ${detail}`
@@ -106,7 +109,7 @@ onMounted(() => {
 
 onBeforeRouteLeave((to, from, next) => {
   window.onbeforeunload = null
-  if (window.confirm('Are you sure you want to leave?')) {
+  if (!leave_lock || window.confirm('Are you sure you want to leave?')) {
     next()
   } else {
     next(false)
