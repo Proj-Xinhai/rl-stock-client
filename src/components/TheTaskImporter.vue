@@ -14,7 +14,7 @@ const importTask = () => {
   const parentWrapper = props.parentWrapper
   Object.assign(document.createElement('input'), {
     type: 'file',
-    accept: '.json',
+    accept: '.rlstockexport',
     onchange: (e: Event) => {
       const target = e.target as HTMLInputElement
       if (target.files) {

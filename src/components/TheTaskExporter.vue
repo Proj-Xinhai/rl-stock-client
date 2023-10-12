@@ -14,7 +14,7 @@ const exportTask = () => {
     const url = window.URL.createObjectURL(blob)
     Object.assign(document.createElement('a'), {
       href: url,
-      download: `${props.taskName}.json`
+      download: `${props.taskName}.rlstockexport`
     }).click()
     window.URL.revokeObjectURL(url)
     state.loading = false
