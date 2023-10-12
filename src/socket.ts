@@ -58,6 +58,7 @@ export type ScalarGroup = {
 export type Algorithm = {
   name: string
   description: string
+  args: []
 }
 
 export type Helper = {

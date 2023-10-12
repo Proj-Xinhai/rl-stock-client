@@ -164,7 +164,15 @@ watch (state, () => {
         <div class="ts-grid is-middle-aligned u-top-spaced" v-for="(arg, i) in algorithm_args" :key="i">
           <div class="column is-5-wide">
             <div class="ts-input">
-              <input type="text" v-model="arg.key" :key="i">
+              <input type="text" v-model="arg.key" :key="i" :data-dropdown="i">
+            </div>
+            <div class="ts-dropdown"
+                 v-show="algorithms.find((a) => a.name == algorithm) &&
+                 algorithms.find((a) => a.name == algorithm)?.args.filter((item: string) => item.includes(arg.key)).length !== 0"
+                 :data-name="i">
+              <button class="item"
+                      v-for="_arg in algorithms.find((a) => a.name == algorithm)?.args.filter((item: string) => item.includes(arg.key))"
+                      :key="_arg" @click="arg.key = _arg">{{ _arg }}</button>
             </div>
           </div>
           <div class="column is-10-wide">
