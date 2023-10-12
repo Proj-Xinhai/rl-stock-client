@@ -13,8 +13,8 @@ const task = ref<Task>({
   args: {
     name: '',
     algorithm: '',
-    algorithm_args: '',
-    learn_args: '',
+    algorithm_args: {},
+    learn_args: {},
     helper: ''
   },
   date: '',
