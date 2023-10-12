@@ -94,7 +94,7 @@ watch (state, (newVal) => {
                 learn: {{ task.args.learn_args }}<br />
                 helper: {{ task.args.helper }}<br />
               </div>
-              <div class="column is-fluid is-end-aligned">
+              <div class="column is-fluid is-end-aligned" style="white-space: initial !important">
                 <router-link class="ts-text is-link" :to="{ name: 'task', params: { name: task.name }}">manage</router-link>
                 <TheTaskRemover :task-name="task.name" wrapper="link" />
                 <TheTaskExporter :taskName="task.name" wrapper="link" />

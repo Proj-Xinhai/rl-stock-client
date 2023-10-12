@@ -24,7 +24,7 @@ const exportTask = () => {
 
 <template>
   <div v-if="wrapper == 'button'">
-    <button class="ts-button is-outlined has-start-spaced" @click="exportTask">Export</button>
+    <button class="ts-button is-outlined" @click="exportTask">Export</button>
   </div>
   <div v-else>
     <a class="ts-text is-link has-cursor-pointer" @click="exportTask">Export</a>

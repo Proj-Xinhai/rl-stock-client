@@ -20,7 +20,7 @@ const copyTask = () => {
 
 <template>
   <div v-if="wrapper == 'button'">
-    <button class="ts-button is-outlined has-start-spaced" @click="copyTask">Copy</button>
+    <button class="ts-button is-outlined" @click="copyTask">Copy</button>
   </div>
   <div v-else>
     <a class="ts-text is-link has-cursor-pointer" @click="copyTask">Copy</a>

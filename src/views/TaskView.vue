@@ -5,6 +5,7 @@ import { useRouter } from 'vue-router'
 import Papa from 'papaparse'
 import TheTaskExporter from "@/components/TheTaskExporter.vue"
 import TheTaskCopier from "@/components/TheTaskCopier.vue"
+import TheTaskRemover from "@/components/TheTaskRemover.vue";
 
 const router = useRouter()
 
@@ -86,9 +87,13 @@ watch (state, () => {
 </script>
 
 <template>
-  <div class="ts-header is-huge">{{ task_name }}
-    <TheTaskExporter :task-name="task_name" wrapper="button" />
-    <TheTaskCopier :task-name="task_name" wrapper="button" />
+  <div class="ts-wrap is-middle-aligned">
+    <div class="ts-header is-huge">{{ task_name }}</div>
+    <div class="ts-wrap is-compact">
+      <TheTaskRemover :task-name="task_name" wrapper="button" />
+      <TheTaskExporter :task-name="task_name" wrapper="button" />
+      <TheTaskCopier :task-name="task_name" wrapper="button" />
+    </div>
   </div>
   <div class="ts-space"></div>
   <details class="ts-accordion" open>

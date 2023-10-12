@@ -22,7 +22,7 @@ const removeTask = () => {
 
 <template>
   <div v-if="wrapper == 'button'">
-    <button class="ts-button is-outlined has-start-spaced" @click="confirm = taskName">Remove</button>
+    <button class="ts-button is-outlined is-negative" @click="confirm = taskName">Remove</button>
   </div>
   <div v-else>
     <a class="ts-text is-link has-cursor-pointer" @click="confirm = taskName">Remove</a>
