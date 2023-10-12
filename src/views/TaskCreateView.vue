@@ -2,7 +2,7 @@
 import { state, socket, type Algorithm, type Helper } from '@/socket'
 import { watch, ref, onMounted } from "vue"
 import { useRouter } from 'vue-router'
-import TheTaskImporter from "@/components/TheTaskImporter.vue";
+import TheTaskImporter from "@/components/TheTaskImporter.vue"
 
 const route = useRouter()
 
