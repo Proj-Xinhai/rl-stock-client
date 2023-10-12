@@ -96,7 +96,6 @@ watch (state, (newVal) => {
               </div>
               <div class="column is-fluid is-end-aligned">
                 <router-link class="ts-text is-link" :to="{ name: 'task', params: { name: task.name }}">manage</router-link>
-                <a class="ts-text is-link has-cursor-pointer" @click="confirm = task.name">remove</a>
                 <TheTaskRemover :task-name="task.name" wrapper="link" />
                 <TheTaskExporter :taskName="task.name" wrapper="link" />
                 <TheTaskCopier :task-name="task.name" wrapper="link" />
