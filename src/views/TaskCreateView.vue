@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { state, socket, type Algorithm, type Helper } from '@/socket'
 import { watch, ref, onMounted } from "vue"
-import { useRouter, useRoute } from 'vue-router'
+import { useRouter, useRoute, onBeforeRouteLeave } from 'vue-router'
 import TheTaskImporter from "@/components/TheTaskImporter.vue"
 
 const route = useRoute()
@@ -98,6 +98,19 @@ const copyTask = () => {
 onMounted(() => {
   loadOptions()
   if (route.query.copy) copyTask()
+
+  window.onbeforeunload = () => {
+    return 'Are you sure you want to leave?'
+  }
+})
+
+onBeforeRouteLeave((to, from, next) => {
+  window.onbeforeunload = null
+  if (window.confirm('Are you sure you want to leave?')) {
+    next()
+  } else {
+    next(false)
+  }
 })
 
 watch (state, () => {
