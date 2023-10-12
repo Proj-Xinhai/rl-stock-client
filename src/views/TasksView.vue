@@ -3,6 +3,7 @@ import { state, socket, type Task } from "@/socket"
 import { onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import TheConfirm from "@/components/TheConfirm.vue"
+import TheTaskExporter from "@/components/TheTaskExporter.vue"
 
 const route = useRouter()
 
@@ -14,21 +15,6 @@ const removeTask = (name: string) => {
   socket.emit('remove_task', name, (status: boolean, msg: string, detail: string) => {
     if (!status) alert(`${msg}: remove task ${name} failed: ${detail}`)
     confirm.value = ''
-    state.loading = false
-  })
-}
-
-const exportTask = (name: string) => {
-  state.loading = true
-  socket.emit('export_task', name, (data: Task) => {
-    state.loading = false
-    const blob = new Blob([JSON.stringify(data)], { type: 'application/json' })
-    const url = window.URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `${name}.json`
-    a.click()
-    window.URL.revokeObjectURL(url)
     state.loading = false
   })
 }
@@ -120,7 +106,7 @@ watch (state, (newVal) => {
               <div class="column is-fluid is-end-aligned">
                 <router-link class="ts-text is-link" :to="{ name: 'task', params: { name: task.name }}">manage</router-link>
                 <a class="ts-text is-link has-cursor-pointer" @click="confirm = task.name">remove</a>
-                <a class="ts-text is-link has-cursor-pointer" @click="exportTask(task.name)">export</a>
+                <TheTaskExporter :taskName="task.name" wrapper="link" />
               </div>
             </div>
           </td>

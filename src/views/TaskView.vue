@@ -3,6 +3,7 @@ import { state, socket, type Task, type Work } from '@/socket'
 import { onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import Papa from 'papaparse'
+import TheTaskExporter from "@/components/TheTaskExporter.vue"
 
 const route = useRouter()
 
@@ -84,7 +85,7 @@ watch (state, () => {
 </script>
 
 <template>
-  <div class="ts-header is-huge">{{ task_name }}</div>
+  <div class="ts-header is-huge">{{ task_name }} <TheTaskExporter :task-name="task_name" wrapper="button" /></div>
   <div class="ts-space"></div>
   <details class="ts-accordion" open>
     <summary>algorithm: {{ algorithm }}</summary>
