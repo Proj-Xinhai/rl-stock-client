@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { state, socket, type Algorithm, type Helper } from '@/socket'
+import { state, socket, type Algorithm, type Helper, type Task } from '@/socket'
 import { watch, ref, onMounted } from "vue"
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import TheTaskImporter from "@/components/TheTaskImporter.vue"
 
-const route = useRouter()
+const route = useRoute()
+const router = useRouter()
 
 const algorithms = ref<Algorithm[]>([])
 const helpers = ref<Helper[]>([])
@@ -66,7 +67,7 @@ const createTask = () => {
   }, (status: boolean, msg: string, detail: string) => {
     state.loading = false
     if (status) {
-      route.push({ name: 'tasks' })
+      router.push({ name: 'tasks' })
     } else {
       createError.value = `${msg}: ${detail}`
     }
@@ -75,6 +76,9 @@ const createTask = () => {
 
 onMounted(() => {
   loadOptions()
+  if (route.query.copy) {
+    console.log("copy")
+  }
 })
 
 watch (state, () => {
