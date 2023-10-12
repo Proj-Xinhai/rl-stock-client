@@ -76,14 +76,22 @@ const createTask = () => {
 
 const copyTask = () => {
   // state.tasks
-  const task = state.tasks.find((task) => task.name == route.query.copy)
-  if (task) {
-    name.value = task.name
-    algorithm.value = task.args.algorithm
+  const taskToCopy = state.tasks.find((task) => task.name == route.query.copy)
+  if (taskToCopy) {
+    name.value = taskToCopy.name
+    algorithm.value = taskToCopy.args.algorithm
     algorithm_args.value = []
+    for (const [key, value] of Object.entries(taskToCopy.args.algorithm_args)) {
+      algorithm_args.value.push({key: key, value: value as unknown as string})
+    }
     learn_args.value = []
+    for (const [key, value] of Object.entries(taskToCopy.args.learn_args)) {
+      learn_args.value.push({key: key, value: value as unknown as string})
+    }
+    helper.value = taskToCopy.args.helper
 
-    helper.value = task.args.helper
+    // remove query
+    router.replace({ query: {} })
   }
 }
 
