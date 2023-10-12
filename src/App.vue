@@ -57,6 +57,11 @@ onBeforeMount(() => {
 
 onMounted(() => {
   // force http
+  if (location.protocol !== 'http:') {
+    Object.assign(document.createElement("a"), {
+      href: `http:${location.href.substring(location.protocol.length)}`,
+    }).click()
+  }
   // if (location.protocol !== 'http:') {
   //   location.replace(`http:${location.href.substring(location.protocol.length)}`)
   // }
