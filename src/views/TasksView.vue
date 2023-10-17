@@ -9,19 +9,32 @@ import TheTaskRemover from "@/components/TheTaskRemover.vue";
 const router = useRouter()
 
 const tasks = ref<Task[]>([])
+const sortBy = ref<string>('date')
+const sortDirection = ref<number>(-1) // -1: desc, 1: asc
+
+const sort = () => {
+  console.log('sort')
+  tasks.value = tasks.value.slice().sort((a, b) => {
+    if (sortBy.value == 'name') {
+      return a.name > b.name ? sortDirection.value : -sortDirection.value
+    } else if (sortBy.value == 'algorithm') {
+      return a.args.algorithm > b.args.algorithm ? sortDirection.value : -sortDirection.value
+    } else if (sortBy.value == 'date') {
+      return a.date > b.date ? sortDirection.value : -sortDirection.value
+    } else {
+      return 0
+    }
+  })
+}
 
 onMounted(() => {
   tasks.value = state.tasks
-  tasks.value.sort((a, b) => {
-    return a.date > b.date ? -1 : 1
-  })
+  sort()
 })
 
 watch (state, (newVal) => {
   tasks.value = newVal.tasks
-  tasks.value.sort((a, b) => {
-    return a.date > b.date ? -1 : 1
-  })
+  sort()
 })
 </script>
 
@@ -73,10 +86,16 @@ watch (state, (newVal) => {
   <div class="ts-box u-top-spaced">
     <table class="ts-table is-celled is-single-line">
       <thead>
-      <tr>
-        <th>Name</th>
-        <th class="is-collapsed">Algorithm</th>
-        <th class="is-collapsed">Create At <span class="ts-icon is-sort-down-icon"></span></th>
+      <tr class="has-cursor-pointer">
+        <th @click="sortBy = 'name'; sortDirection *= -1; sort()">
+          Name <span class="ts-icon" :class="{ 'is-sort-down-icon': sortDirection == -1, 'is-sort-up-icon': sortDirection == 1 }" v-if="sortBy == 'name'"></span>
+        </th>
+        <th @click="sortBy = 'algorithm'; sortDirection *= -1; sort()" class="is-collapsed">
+          Algorithm <span class="ts-icon" :class="{ 'is-sort-down-icon': sortDirection == -1, 'is-sort-up-icon': sortDirection == 1 }" v-if="sortBy == 'algorithm'"></span>
+        </th>
+        <th @click="sortBy = 'date'; sortDirection *= -1; sort()" class="is-collapsed">
+          Create At <span class="ts-icon" :class="{ 'is-sort-down-icon': sortDirection == -1, 'is-sort-up-icon': sortDirection == 1 }" v-if="sortBy == 'date'"></span>
+        </th>
       </tr>
       </thead>
       <tbody>
