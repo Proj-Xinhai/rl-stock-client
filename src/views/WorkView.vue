@@ -40,6 +40,7 @@ const load = () => {
 }
 
 const exportWork = () => {
+  state.loading = true
   socket.emit("export_work", work.value.id, (status: boolean, msg: string, zip: string | ArrayBuffer) => {
     console.log("exported")
     if (status) {
@@ -53,6 +54,7 @@ const exportWork = () => {
     } else {
       alert(`${msg}: ${zip}`)
     }
+    state.loading = false
   })
 }
 
