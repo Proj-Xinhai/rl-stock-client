@@ -90,17 +90,6 @@ watch (state, (newVal) => {
         <th v-for="col in ['Name', 'Algorithm', 'Create At']" @click="sortBy = col; sortDirection *= -1; sort()">
           {{ col }} <span class="ts-icon" :class="{ 'is-sort-down-icon': sortDirection == -1, 'is-sort-up-icon': sortDirection == 1 }" v-if="sortBy == col"></span>
         </th>
-        <!--
-        <th @click="sortBy = 'name'; sortDirection *= -1; sort()">
-          Name <span class="ts-icon" :class="{ 'is-sort-down-icon': sortDirection == -1, 'is-sort-up-icon': sortDirection == 1 }" v-if="sortBy == 'name'"></span>
-        </th>
-        <th @click="sortBy = 'algorithm'; sortDirection *= -1; sort()">
-          Algorithm <span class="ts-icon" :class="{ 'is-sort-down-icon': sortDirection == -1, 'is-sort-up-icon': sortDirection == 1 }" v-if="sortBy == 'algorithm'"></span>
-        </th>
-        <th @click="sortBy = 'date'; sortDirection *= -1; sort()">
-          Create At <span class="ts-icon" :class="{ 'is-sort-down-icon': sortDirection == -1, 'is-sort-up-icon': sortDirection == 1 }" v-if="sortBy == 'date'"></span>
-        </th>
-        -->
       </tr>
       </thead>
       <tbody>
