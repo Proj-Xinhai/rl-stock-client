@@ -28,12 +28,14 @@ const exportWork = () => {
 </script>
 
 <template>
-  <div v-if="wrapper == 'button'">
+  <div :class="{ 'has-cursor-not-allowed': disabled }" v-if="wrapper == 'button'">
     <button class="ts-button is-outlined"
-            :class="{ 'is-disabled': disabled, 'has-cursor-not-allowed': disabled }"
+            :class="{ 'is-disabled': disabled }"
             @click="exportWork">Export</button>
   </div>
-  <div v-else>
-    <a class="ts-text is-link has-cursor-pointer" @click.stop="exportWork">Export</a>
+  <div :class="{ 'has-cursor-not-allowed': disabled }" @click.stop="console.log('テヘペロ')" v-else>
+    <a class="ts-text is-link has-cursor-pointer"
+       :class="{ 'is-disabled': disabled }"
+       @click.stop="exportWork">Export</a>
   </div>
 </template>

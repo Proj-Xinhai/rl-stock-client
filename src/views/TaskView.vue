@@ -167,7 +167,7 @@ watch (state, () => {
             {{ status[work.status] }}
           </td>
           <td class="is-collapsed is-center-aligned">{{ work.date }}</td>
-          <td class="is-collapsed"><TheWorkExporter wrapper="link" :work-id="work.id" /></td>
+          <td class="is-collapsed"><TheWorkExporter wrapper="link" :work-id="work.id" :disabled="work.status != 2" /></td>
         </tr>
       </template>
       </tbody>
