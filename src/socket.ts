@@ -110,7 +110,7 @@ socket.on('disconnect', () => {
 socket.on('git_version', (hash) => {
   console.log('Server git version: ' + hash)
   if (hash !== undefined) {
-    Axios.get(`https://api.github.com/repos/Proj-Xinhai/rl-stock/commits?per_page=1`).then((res) => {
+    Axios.get(`https://api.github.com/repos/Proj-Xinhai/rl-stock/commits?per_page=1`).then((res: { data: { sha: string }[] }) => {
       if (res.data[0].sha !== hash) {
         alert('Warning: The server has been updated, please update it to the latest version.')
       } else {
