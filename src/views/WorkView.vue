@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { state, type Task, type Work } from '@/socket'
+import { state, socket, type Task, type Work } from '@/socket'
 import { onMounted, ref, watch, nextTick } from 'vue'
 import { onBeforeRouteLeave, useRouter } from "vue-router"
 import TheScalars from "@/components/TheScalars.vue"
@@ -37,6 +37,23 @@ const load = () => {
     task.value = state.tasks.find(({name}) => name == router.currentRoute.value.params.name) as Task
     work.value = state.works.find(({id}) => id == router.currentRoute.value.params.id) as Work
   }
+}
+
+const exportWork = () => {
+  socket.emit("export_work", work.value.id, (status: boolean, msg: string, zip: string | ArrayBuffer) => {
+    console.log("exported")
+    if (status) {
+      const blob = new Blob([zip], { type: 'application/zip' })
+      const url = window.URL.createObjectURL(blob)
+      Object.assign(document.createElement('a'), {
+        href: url,
+        download: `${work.value.task_name}_${work.value.id}.zip`
+      }).click()
+      window.URL.revokeObjectURL(url)
+    } else {
+      alert(`${msg}: ${zip}`)
+    }
+  })
 }
 
 const refresh = async () => {
@@ -85,7 +102,9 @@ watch (state, () => {
       </div>
       <span class="ts-text is-code">#{{ work.id }}</span>
     </div>
-    <button class="ts-button is-outlined" @click="">Export</button>
+    <button class="ts-button is-outlined"
+            :class="{ 'is-disabled': work.status !== 2, 'has-cursor-not-allowed': work.status !== 2 }"
+            @click="exportWork">Export</button>
   </div>
 
   <div class="ts-timeline u-top-spaced">
