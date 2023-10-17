@@ -78,10 +78,15 @@ watch (state, () => {
   <div style="position: fixed; top: 0; right: 0;">
     <button class="ts-button is-circular is-outlined u-spaced-big" @click="refresh">refresh</button>
   </div>
-  <div class="ts-header is-huge">
-    <span class="has-cursor-pointer" @click="router.push({ name: 'task', params: { name: work.task_name } })">{{ work.task_name }}</span>
+  <div class="ts-wrap is-middle-aligned">
+    <div>
+      <div class="ts-header is-huge">
+        <span class="has-cursor-pointer" @click="router.push({ name: 'task', params: { name: work.task_name } })">{{ work.task_name }}</span>
+      </div>
+      <span class="ts-text is-code">#{{ work.id }}</span>
+    </div>
+    <button class="ts-button is-outlined" @click="">Export</button>
   </div>
-  <span class="ts-text is-code">#{{ work.id }}</span>
 
   <div class="ts-timeline u-top-spaced">
     <template v-for="timeline in work.timeline" :key="timeline.name">
