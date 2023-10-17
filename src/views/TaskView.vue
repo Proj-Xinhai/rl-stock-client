@@ -5,7 +5,8 @@ import { useRouter } from 'vue-router'
 import Papa from 'papaparse'
 import TheTaskExporter from "@/components/TheTaskExporter.vue"
 import TheTaskCopier from "@/components/TheTaskCopier.vue"
-import TheTaskRemover from "@/components/TheTaskRemover.vue";
+import TheTaskRemover from "@/components/TheTaskRemover.vue"
+import TheWorkExporter from "@/components/TheWorkExporter.vue"
 
 const router = useRouter()
 
@@ -152,7 +153,7 @@ watch (state, () => {
         <th class="is-collapsed">id</th>
         <th>task_name</th>
         <th class="is-collapsed">Status</th>
-        <th class="is-collapsed">Create At <span class="ts-icon is-sort-down-icon"></span></th>
+        <th class="is-collapsed" colspan="2">Create At <span class="ts-icon is-sort-down-icon"></span></th>
       </tr>
       </thead>
       <tbody>
@@ -165,7 +166,8 @@ watch (state, () => {
               :data-tooltip="work.detail">
             {{ status[work.status] }}
           </td>
-          <td class="is-center-aligned">{{ work.date }}</td>
+          <td class="is-collapsed is-center-aligned">{{ work.date }}</td>
+          <td class="is-collapsed"><TheWorkExporter wrapper="link" :work-id="work.id" /></td>
         </tr>
       </template>
       </tbody>
