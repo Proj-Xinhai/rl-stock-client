@@ -9,17 +9,17 @@ import TheTaskRemover from "@/components/TheTaskRemover.vue";
 const router = useRouter()
 
 const tasks = ref<Task[]>([])
-const sortBy = ref<string>('date')
+const sortBy = ref<string>('Create At')
 const sortDirection = ref<number>(-1) // -1: desc, 1: asc
 
 const sort = () => {
   console.log('sort')
   tasks.value = tasks.value.slice().sort((a, b) => {
-    if (sortBy.value == 'name') {
+    if (sortBy.value == 'Name') {
       return a.name > b.name ? sortDirection.value : -sortDirection.value
-    } else if (sortBy.value == 'algorithm') {
+    } else if (sortBy.value == 'Algorithm') {
       return a.args.algorithm > b.args.algorithm ? sortDirection.value : -sortDirection.value
-    } else if (sortBy.value == 'date') {
+    } else if (sortBy.value == 'Create At') {
       return a.date > b.date ? sortDirection.value : -sortDirection.value
     } else {
       return 0
@@ -87,23 +87,28 @@ watch (state, (newVal) => {
     <table class="ts-table is-celled is-single-line">
       <thead>
       <tr class="has-cursor-pointer">
+        <th v-for="col in ['Name', 'Algorithm', 'Create At']" @click="sortBy = col; sortDirection *= -1; sort()">
+          {{ col }} <span class="ts-icon" :class="{ 'is-sort-down-icon': sortDirection == -1, 'is-sort-up-icon': sortDirection == 1 }" v-if="sortBy == col"></span>
+        </th>
+        <!--
         <th @click="sortBy = 'name'; sortDirection *= -1; sort()">
           Name <span class="ts-icon" :class="{ 'is-sort-down-icon': sortDirection == -1, 'is-sort-up-icon': sortDirection == 1 }" v-if="sortBy == 'name'"></span>
         </th>
-        <th @click="sortBy = 'algorithm'; sortDirection *= -1; sort()" class="is-collapsed">
+        <th @click="sortBy = 'algorithm'; sortDirection *= -1; sort()">
           Algorithm <span class="ts-icon" :class="{ 'is-sort-down-icon': sortDirection == -1, 'is-sort-up-icon': sortDirection == 1 }" v-if="sortBy == 'algorithm'"></span>
         </th>
-        <th @click="sortBy = 'date'; sortDirection *= -1; sort()" class="is-collapsed">
+        <th @click="sortBy = 'date'; sortDirection *= -1; sort()">
           Create At <span class="ts-icon" :class="{ 'is-sort-down-icon': sortDirection == -1, 'is-sort-up-icon': sortDirection == 1 }" v-if="sortBy == 'date'"></span>
         </th>
+        -->
       </tr>
       </thead>
       <tbody>
       <template v-for="task in tasks" :key="task.name">
         <tr class="has-cursor-pointer" :data-toggle="task.name+':has-hidden'" @dblclick="router.push({ name: 'task', params: { name: task.name } })">
           <td>{{ task.name }}</td>
-          <td>{{ task.args.algorithm }}</td>
-          <td>{{ task.date }}</td>
+          <td class="is-collapsed">{{ task.args.algorithm }}</td>
+          <td class="is-collapsed">{{ task.date }}</td>
         </tr>
         <tr class="has-hidden" :data-name="task.name">
           <td class="is-secondary is-padded is-insetted" colspan="3">
