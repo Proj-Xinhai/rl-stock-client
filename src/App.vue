@@ -19,7 +19,7 @@ const reloadServices = () => {
 
   // namespace /service
   const temp_socket = io('ws://rl-stock.local:8000/service', {
-    transports: ['websocket'],
+    transports: ['websocket']
   })
 
   temp_socket.on('connect', () => {
@@ -35,6 +35,7 @@ const reloadServices = () => {
     console.log('connect_error')
     console.log(err)
     serviceError.value = true
+    temp_socket.disconnect()
   })
 }
 
