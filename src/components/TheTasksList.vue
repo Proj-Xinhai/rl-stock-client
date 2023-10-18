@@ -2,7 +2,7 @@
 import TheTaskRemover from "@/components/TheTaskRemover.vue"
 import TheTaskExporter from "@/components/TheTaskExporter.vue"
 import TheTaskCopier from "@/components/TheTaskCopier.vue"
-import { onMounted, ref, watch, toRaw } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { state, type Task } from "@/socket"
 import { useRouter } from "vue-router"
 
@@ -13,7 +13,8 @@ const sortBy = ref<string>('Create At')
 const sortDirection = ref<number>(-1) // -1: desc, 1: asc
 
 const sort = (col: string) => {
-  console.log('sort')
+  // console.log('sort')
+  if (col !== "Create At") sort("Create At") // if not sorted by Create At, sort by Create At first
   if (sortBy.value !== col) {
     sortDirection.value = -1
   }
