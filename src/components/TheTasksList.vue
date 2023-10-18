@@ -2,7 +2,7 @@
 import TheTaskRemover from "@/components/TheTaskRemover.vue"
 import TheTaskExporter from "@/components/TheTaskExporter.vue"
 import TheTaskCopier from "@/components/TheTaskCopier.vue"
-import { onMounted, ref, watch } from "vue";
+import { onMounted, ref, watch, toRaw } from "vue";
 import { state, type Task } from "@/socket"
 import { useRouter } from "vue-router"
 
@@ -12,8 +12,12 @@ const tasks = ref<Task[]>([])
 const sortBy = ref<string>('Create At')
 const sortDirection = ref<number>(-1) // -1: desc, 1: asc
 
-const sort = () => {
+const sort = (col: string) => {
   console.log('sort')
+  if (sortBy.value !== col) {
+    sortDirection.value = -1
+  }
+  sortBy.value = col
   tasks.value = tasks.value.slice().sort((a, b) => {
     if (sortBy.value == 'Name') {
       return a.name > b.name ? sortDirection.value : -sortDirection.value
@@ -29,12 +33,12 @@ const sort = () => {
 
 onMounted(() => {
   tasks.value = state.tasks
-  sort()
+  sort(sortBy.value)
 })
 
 watch (state, (newVal) => {
   tasks.value = newVal.tasks
-  sort()
+  sort(sortBy.value)
 })
 
 </script>
@@ -44,7 +48,7 @@ watch (state, (newVal) => {
     <table class="ts-table is-celled is-single-line">
       <thead>
       <tr class="has-cursor-pointer">
-        <th v-for="col in ['Name', 'Algorithm', 'Create At']" @click="sortBy = col; sortDirection *= -1; sort()">
+        <th v-for="col in ['Name', 'Algorithm', 'Create At']" @click="sortDirection *= -1; sort(col)">
           {{ col }} <span class="ts-icon" :class="{ 'is-sort-down-icon': sortDirection == -1, 'is-sort-up-icon': sortDirection == 1 }" v-if="sortBy == col"></span>
         </th>
       </tr>
