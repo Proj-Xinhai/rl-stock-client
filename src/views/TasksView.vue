@@ -1,16 +1,28 @@
 <script setup lang="ts">
-import { state, type Task } from "@/socket"
+import { state } from "@/socket"
 import { onMounted, ref, watch } from 'vue'
 import TheTasksList from "@/components/TheTasksList.vue"
 
-const tasks = ref<Task[]>([])
+const taskCount = ref<number>(0)
+const workCount = ref<number>(0)
+const inProgressCount = ref<number>(0)
+const completeCount = ref<number>(0)
+const failedCount = ref<number>(0)
 
 onMounted(() => {
-  tasks.value = state.tasks
+  taskCount.value = state.tasks.length
+  workCount.value = state.works.length
+  inProgressCount.value = state.works.filter(({status}) => [0, 1].includes(status)).length
+  completeCount.value = state.works.filter(({status}) => status == 2).length
+  failedCount.value = state.works.filter(({status}) => status == -1).length
 })
 
 watch (state, (newVal) => {
-  tasks.value = newVal.tasks
+  taskCount.value = newVal.tasks.length
+  workCount.value = newVal.works.length
+  inProgressCount.value = newVal.works.filter(({status}) => [0, 1].includes(status)).length
+  completeCount.value = newVal.works.filter(({status}) => status == 2).length
+  failedCount.value = newVal.works.filter(({status}) => status == -1).length
 })
 </script>
 
@@ -20,9 +32,9 @@ watch (state, (newVal) => {
       <div class="ts-box">
         <div class="ts-content">
           <div class="ts-statistic">
-            <div class="value">{{ tasks.length }}</div>
+            <div class="value" style="display: table-cell;">{{ taskCount }} <span class="ts-text is-secondary is-small">/{{ workCount }}</span></div>
           </div>
-          tasks
+          tasks <span class="ts-text is-secondary">/works</span>
         </div>
         <div class="symbol">
           <span class="ts-icon is-bars-progress-icon"></span>
@@ -33,12 +45,12 @@ watch (state, (newVal) => {
       <div class="ts-box">
         <div class="ts-content">
           <div class="ts-statistic">
-            <div class="value">0</div>
+            <div class="value">{{ inProgressCount }}</div>
           </div>
-          complete
+          works in progress
         </div>
         <div class="symbol">
-          <span class="ts-icon is-check-double-icon"></span>
+          <span class="ts-icon is-gears-icon"></span>
         </div>
       </div>
     </div>
@@ -46,12 +58,12 @@ watch (state, (newVal) => {
       <div class="ts-box">
         <div class="ts-content">
           <div class="ts-statistic">
-            <div class="value">0</div>
+            <div class="value" style="display: table-cell;">{{ completeCount }} <span class="ts-text is-secondary is-negative is-small">/{{ failedCount }}</span></div>
           </div>
-          failed
+          complete <span class="ts-text is-secondary is-negative">/failed</span>
         </div>
         <div class="symbol">
-          <span class="ts-icon is-circle-exclamation-icon"></span>
+          <span class="ts-icon is-check-double-icon"></span>
         </div>
       </div>
     </div>
