@@ -8,6 +8,20 @@ import { useRouter } from "vue-router"
 
 const router = useRouter()
 
+const tasksSelected = ref<string[]>([])
+const complexSelectedStatus = ref<boolean>(false)
+
+const complexSelected = async () => {
+  if (tasksSelected.value.length == tasks.value.length) {
+    tasksSelected.value = []
+  } else {
+    tasksSelected.value = tasks.value.map(({name}) => name)
+  }
+  setTimeout(() => {
+    complexSelectedStatus.value = tasksSelected.value.length > 0
+  }, 0)
+}
+
 const tasks = ref<Task[]>([])
 const sortBy = ref<string>('Create At')
 const sortDirection = ref<number>(-1) // -1: desc, 1: asc
@@ -46,6 +60,10 @@ watch (state, () => {
   load()
 })
 
+watch (tasksSelected, () => {
+  complexSelectedStatus.value = tasksSelected.value.length > 0
+})
+
 </script>
 
 <template>
@@ -53,6 +71,11 @@ watch (state, () => {
     <table class="ts-table is-celled is-single-line">
       <thead>
       <tr class="has-cursor-pointer">
+        <th class="is-collapsed is-compact">
+          <label class="ts-checkbox is-solo" :class="{ 'is-indeterminate': tasksSelected.length > 0 && tasksSelected.length !== tasks.length }">
+            <input type="checkbox" @click="complexSelected" v-model="complexSelectedStatus" />
+          </label>
+        </th>
         <th v-for="col in ['Name', 'Algorithm', 'Create At']" @click="sort(col, true)">
           {{ col }} <span class="ts-icon" :class="{ 'is-sort-down-icon': sortDirection == -1, 'is-sort-up-icon': sortDirection == 1 }" v-if="sortBy == col"></span>
         </th>
@@ -61,6 +84,11 @@ watch (state, () => {
       <tbody>
       <template v-for="task in tasks" :key="task.name">
         <tr class="has-cursor-pointer" :data-toggle="task.name+':has-hidden'" @dblclick="router.push({ name: 'task', params: { name: task.name } })">
+          <td class="is-compact" @click.stop>
+            <label class="ts-checkbox is-solo">
+              <input type="checkbox" :id="task.name" :value="task.name" v-model="tasksSelected" />
+            </label>
+          </td>
           <td>{{ task.name }}</td>
           <td class="is-collapsed">{{ task.args.algorithm }}</td>
           <td class="is-collapsed">{{ task.date }}</td>
