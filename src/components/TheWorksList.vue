@@ -14,6 +14,20 @@ const works = ref<Work[]>([])
 const sortBy = ref<string>('Create At')
 const sortDirection = ref<number>(-1) // -1: desc, 1: asc
 
+const workSelected = ref<string[]>([])
+const complexSelectedStatus = ref<boolean>(false)
+
+const complexSelected = async () => {
+  if (workSelected.value.length == works.value.length) {
+    workSelected.value = []
+  } else {
+    workSelected.value = works.value.map(({id}) => id)
+  }
+  setTimeout(() => {
+    complexSelectedStatus.value = workSelected.value.length > 0
+  }, 0)
+}
+
 const status: { [key: string]: string } = {
   '0': 'pending',
   '1': 'running',
@@ -60,6 +74,11 @@ onMounted(() => {
 watch (state, () => {
   load()
 })
+
+watch (workSelected, () => {
+  complexSelectedStatus.value = workSelected.value.length > 0
+})
+
 </script>
 
 <template>
@@ -67,6 +86,11 @@ watch (state, () => {
     <table class="ts-table is-celled is-single-line">
       <thead>
       <tr>
+        <th class="is-collapsed is-compact">
+          <label class="ts-checkbox is-solo" :class="{ 'is-indeterminate': workSelected.length > 0 && workSelected.length !== works.length }">
+            <input type="checkbox" @click="complexSelected" v-model="complexSelectedStatus" />
+          </label>
+        </th>
         <th v-for="col in ['id', 'task_name', 'Status', 'Create At']" @click="sort(col, true)">
           {{ col }} <span class="ts-icon" :class="{ 'is-sort-down-icon': sortDirection == -1, 'is-sort-up-icon': sortDirection == 1 }" v-if="sortBy == col"></span>
         </th>
@@ -75,6 +99,11 @@ watch (state, () => {
       <tbody>
       <template v-for="work in works" :key="work.id">
         <tr class="has-cursor-pointer" @click="router.push({ name: 'work', params: { id: work.id } })">
+          <td class="is-compact" @click.stop>
+            <label class="ts-checkbox is-solo">
+              <input type="checkbox" :id="work.id" :value="work.id" v-model="workSelected" />
+            </label>
+          </td>
           <td class="is-center-aligned is-collapsed">{{ work.id }}</td>
           <td>{{ work.task_name }}</td>
           <td class="is-center-aligned is-collapsed"
