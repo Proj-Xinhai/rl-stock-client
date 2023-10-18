@@ -107,18 +107,23 @@ socket.on('disconnect', () => {
   state.connected = false
 })
 
-socket.on('git_version', (hash) => {
-  console.log('Server git version: ' + hash)
+socket.on('git_version', (hash: string, branch: string) => {
+  console.log('Server branch: ' + branch)
+  console.log('Server version: ' + hash)
+
+  if (branch == undefined) {
+    branch = 'main'
+    console.log('Warning: The server branch is undefined, default to main.')
+  }
+
   if (hash !== undefined) {
-    Axios.get(`https://api.github.com/repos/Proj-Xinhai/rl-stock/commits?per_page=1`).then((res: { data: { sha: string }[] }) => {
-      if (res.data[0].sha !== hash) {
+    Axios.get(`https://api.github.com/repos/Proj-Xinhai/rl-stock/branches/${branch}`).then((res: { data: { commit: { sha: string } } }) => {
+      if (res.data.commit.sha !== hash) {
         alert('Warning: The server has been updated, please update it to the latest version.')
       } else {
         console.log('Server is up to date.')
       }
     })
-  } else {
-    alert('Warning: it is strongly recommended to update the server by running `git pull` in the server directory.')
   }
 })
 
