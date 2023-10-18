@@ -20,6 +20,7 @@ const reloadScalar = () => {
   scalarLoading.value = true
   const args = {
     uuid: props.uuid,
+    gets: [props.timeline]
   }
 
   socket.emit("get_scalar", args, (data: {}) => {
