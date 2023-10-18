@@ -94,7 +94,7 @@ watch (tasksSelected, () => {
           <td class="is-collapsed">{{ task.date }}</td>
         </tr>
         <tr class="has-hidden" :data-name="task.name">
-          <td class="is-secondary is-padded is-insetted" colspan="3">
+          <td class="is-secondary is-padded is-insetted" colspan="4">
             <div class="ts-grid">
               <div class="column">
                 algorithm: {{ task.args.algorithm }} {{ task.args.algorithm_args }}<br />
