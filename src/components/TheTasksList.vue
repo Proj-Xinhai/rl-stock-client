@@ -84,7 +84,7 @@ watch (tasksSelected, () => {
       <tbody>
       <template v-for="task in tasks" :key="task.name">
         <tr class="has-cursor-pointer" :data-toggle="task.name+':has-hidden'" @dblclick="router.push({ name: 'task', params: { name: task.name } })">
-          <td class="is-compact" @click.stop>
+          <td class="is-compact" @click.stop @dblclick.stop>
             <label class="ts-checkbox is-solo">
               <input type="checkbox" :id="task.name" :value="task.name" v-model="tasksSelected" />
             </label>
