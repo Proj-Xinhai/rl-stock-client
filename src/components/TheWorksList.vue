@@ -14,17 +14,17 @@ const works = ref<Work[]>([])
 const sortBy = ref<string>('Create At')
 const sortDirection = ref<number>(-1) // -1: desc, 1: asc
 
-const workSelected = ref<string[]>([])
+const worksSelected = ref<string[]>([])
 const complexSelectedStatus = ref<boolean>(false)
 
 const complexSelected = async () => {
-  if (workSelected.value.length == works.value.length) {
-    workSelected.value = []
+  if (worksSelected.value.length == works.value.length) {
+    worksSelected.value = []
   } else {
-    workSelected.value = works.value.map(({id}) => id)
+    worksSelected.value = works.value.map(({id}) => id)
   }
   setTimeout(() => {
-    complexSelectedStatus.value = workSelected.value.length > 0
+    complexSelectedStatus.value = worksSelected.value.length > 0
   }, 0)
 }
 
@@ -75,8 +75,8 @@ watch (state, () => {
   load()
 })
 
-watch (workSelected, () => {
-  complexSelectedStatus.value = workSelected.value.length > 0
+watch (worksSelected, () => {
+  complexSelectedStatus.value = worksSelected.value.length > 0
 })
 
 </script>
@@ -87,7 +87,7 @@ watch (workSelected, () => {
       <thead>
       <tr>
         <th class="is-collapsed is-compact">
-          <label class="ts-checkbox is-solo" :class="{ 'is-indeterminate': workSelected.length > 0 && workSelected.length !== works.length }">
+          <label class="ts-checkbox is-solo" :class="{ 'is-indeterminate': worksSelected.length > 0 && worksSelected.length !== works.length }">
             <input type="checkbox" @click="complexSelected" v-model="complexSelectedStatus" />
           </label>
         </th>
@@ -101,7 +101,7 @@ watch (workSelected, () => {
         <tr class="has-cursor-pointer" @click="router.push({ name: 'work', params: { id: work.id } })">
           <td class="is-compact" @click.stop>
             <label class="ts-checkbox is-solo">
-              <input type="checkbox" :id="work.id" :value="work.id" v-model="workSelected" />
+              <input type="checkbox" :id="work.id" :value="work.id" v-model="worksSelected" />
             </label>
           </td>
           <td class="is-center-aligned is-collapsed">{{ work.id }}</td>
