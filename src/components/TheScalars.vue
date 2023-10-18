@@ -43,7 +43,7 @@ onMounted(() => {
     <div class="ts-box u-top-spaced" v-for="scalar in group.data" :key="scalar.tag">
       <div class="ts-content is-fitted">
         <VuePlotly
-          :data="[{x: scalar.step, y: scalar.value}]"
+          :data="[{x: group.step, y: scalar.value}]"
           :layout="{template: template, title: scalar.tag }"
           :config="{ modeBarButtonsToAdd: [
             {

@@ -46,12 +46,12 @@ export type State = {
 
 export type Scalar = {
   tag: string
-  step: number[]
   value: number[]
 }
 
 export type ScalarGroup = {
   group: string
+  step: number[]
   data: Scalar[]
 }
 
