@@ -12,14 +12,15 @@ const tasks = ref<Task[]>([])
 const sortBy = ref<string>('Create At')
 const sortDirection = ref<number>(-1) // -1: desc, 1: asc
 
-const sort = (col: string) => {
-  // console.log('sort')
-  if (col !== "Create At") sort("Create At") // if not sorted by Create At, sort by Create At first
-  if (sortBy.value !== col) {
-    sortDirection.value = -1
+const sort = (col: string, force: boolean = false) => {
+  if (force) {
+    if (sortBy.value != col) sortDirection.value = -1 // if sort column changed, reset sort direction
+    else sortDirection.value *= -1
+    sortBy.value = col
   }
-  sortBy.value = col
   tasks.value = tasks.value.slice().sort((a, b) => {
+    return a.date > b.date ? sortDirection.value : -sortDirection.value
+  }).slice().sort((a, b) => {
     if (sortBy.value == 'Name') {
       return a.name > b.name ? sortDirection.value : -sortDirection.value
     } else if (sortBy.value == 'Algorithm') {
@@ -32,14 +33,17 @@ const sort = (col: string) => {
   })
 }
 
-onMounted(() => {
+const load = () => {
   tasks.value = state.tasks
   sort(sortBy.value)
+}
+
+onMounted(() => {
+  load()
 })
 
-watch (state, (newVal) => {
-  tasks.value = newVal.tasks
-  sort(sortBy.value)
+watch (state, () => {
+  load()
 })
 
 </script>
@@ -49,7 +53,7 @@ watch (state, (newVal) => {
     <table class="ts-table is-celled is-single-line">
       <thead>
       <tr class="has-cursor-pointer">
-        <th v-for="col in ['Name', 'Algorithm', 'Create At']" @click="sortDirection *= -1; sort(col)">
+        <th v-for="col in ['Name', 'Algorithm', 'Create At']" @click="sort(col, true)">
           {{ col }} <span class="ts-icon" :class="{ 'is-sort-down-icon': sortDirection == -1, 'is-sort-up-icon': sortDirection == 1 }" v-if="sortBy == col"></span>
         </th>
       </tr>
