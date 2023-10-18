@@ -1,1 +1,0 @@
-import{_ as e}from"./TheWorksList.vue_vue_type_script_setup_true_lang-d2bd6536.js";import{d as o,o as r,x as a}from"./index-6451b5d6.js";const m=o({__name:"WorksView",setup(s){return(t,_)=>(r(),a(e))}});export{m as default};
