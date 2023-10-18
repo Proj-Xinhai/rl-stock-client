@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { state, socket, type Task, type Work } from '@/socket'
+import { state, socket, type Task } from '@/socket'
 import { onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import Papa from 'papaparse'
 import TheTaskExporter from "@/components/TheTaskExporter.vue"
 import TheTaskCopier from "@/components/TheTaskCopier.vue"
 import TheTaskRemover from "@/components/TheTaskRemover.vue"
-import TheWorkExporter from "@/components/TheWorkExporter.vue"
+import TheWorksList from "@/components/TheWorksList.vue"
 
 const router = useRouter()
 
@@ -23,7 +23,6 @@ const task = ref<Task>({
   data_example: '',
   preprocess_example: ''
 })
-const works = ref<Work[]>([])
 
 const task_name = ref<string>('')
 const algorithm = ref<string>('')
@@ -35,13 +34,6 @@ const preprocess_example = ref<string[]>([])
 const num_work = ref<number>(1)
 const view_modal = ref<boolean>(false)
 
-const status: { [key: string]: string } = {
-  '0': 'pending',
-  '1': 'running',
-  '2': 'complete',
-  '-1': 'failed'
-}
-
 const loadTask = () => {
   if (state.tasks.length != 0) {
     task.value = state.tasks.find(({name}) => name == router.currentRoute.value.params.name) as Task
@@ -52,14 +44,6 @@ const loadTask = () => {
     data_example.value = Papa.parse<string>(task.value.data_example, {skipEmptyLines: true}).data
     preprocess_example.value = Papa.parse<string>(task.value.preprocess_example, {skipEmptyLines: true}).data
   }
-}
-
-const loadWork = () => {
-  works.value = state.works
-  works.value.sort((a, b) => {
-    return a.date > b.date ? -1 : 1
-  })
-  works.value = works.value.filter((work) => work.task_name == task_name.value)
 }
 
 const createWork = () => {
@@ -78,12 +62,10 @@ const createWork = () => {
 
 onMounted(() => {
   loadTask()
-  loadWork()
 })
 
 watch (state, () => {
   loadTask()
-  loadWork()
 })
 </script>
 
@@ -146,33 +128,7 @@ watch (state, () => {
   <div class="ts-grid is-end-aligned u-top-spaced">
     <button class="ts-button" @click="view_modal = true">Create new work</button>
   </div>
-  <div class="ts-box u-top-spaced">
-    <table class="ts-table is-celled is-single-line">
-      <thead>
-      <tr>
-        <th class="is-collapsed">id</th>
-        <th>task_name</th>
-        <th class="is-collapsed">Status</th>
-        <th class="is-collapsed" colspan="2">Create At <span class="ts-icon is-sort-down-icon"></span></th>
-      </tr>
-      </thead>
-      <tbody>
-      <template v-for="work in works" :key="work.id">
-        <tr class="has-cursor-pointer" @click="router.push({ name: 'work', params: { id: work.id } })">
-          <td class="is-center-aligned">{{ work.id }}</td>
-          <td>{{ work.task_name }}</td>
-          <td class="is-center-aligned"
-              :class="{ 'is-indicated': work.status !== 0,'is-positive': work.status == 2, 'is-negative': work.status == -1 }"
-              :data-tooltip="work.detail">
-            {{ status[work.status] }}
-          </td>
-          <td class="is-collapsed is-center-aligned">{{ work.date }}</td>
-          <td class="is-collapsed"><TheWorkExporter wrapper="link" :work-id="work.id" :disabled="work.status != 2" /></td>
-        </tr>
-      </template>
-      </tbody>
-    </table>
-  </div>
+  <TheWorksList :task="<string>router.currentRoute.value.params.name" />
 
   <div class="ts-app-drawer is-right is-small" :class="{ 'is-visible': view_modal }">
     <div class="content">
@@ -189,26 +145,4 @@ watch (state, () => {
       </div>
     </div>
   </div>
-  <!--
-  <div class="ts-modal" :class="{ 'is-visible': view_modal }">
-    <div class="content">
-      <div class="ts-content">
-        <div class="ts-header">Create {{ num_work }} work of {{ task_name }}</div>
-      </div>
-      <div class="ts-divider"></div>
-      <div class="ts-content">
-        <div class="ts-input">
-          <input type="number" min="1" v-model="num_work">
-        </div>
-      </div>
-      <div class="ts-divider"></div>
-      <div class="ts-content is-tertiary">
-        <div class="ts-wrap is-end-aligned">
-          <button class="ts-button is-outlined" @click="view_modal = false">Cancel</button>
-          <button class="ts-button" @click="createWork">Create</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  -->
 </template>
