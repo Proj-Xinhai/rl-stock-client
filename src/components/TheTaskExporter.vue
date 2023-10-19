@@ -6,19 +6,27 @@ const props = defineProps<{
   wrapper: 'link' | 'button'
 }>()
 
-const exportTask = () => {
-  state.loading = true
-  socket.emit('export_task', props.taskName, (data: Task) => {
-    state.loading = false
+const exporter = (taskNames: string[]) => {
+  const taskName = taskNames.shift()
+  socket.emit('export_task', taskName, (data: Task) => {
     const blob = new Blob([JSON.stringify(data)], { type: 'application/json' })
     const url = window.URL.createObjectURL(blob)
     Object.assign(document.createElement('a'), {
       href: url,
-      download: `${props.taskName}.rlstask`
+      download: `${taskName}.rlstask`
     }).click()
     window.URL.revokeObjectURL(url)
-    state.loading = false
+    if (taskNames.length > 0) {
+      exporter(taskNames)
+    } else {
+      state.loading = false
+    }
   })
+}
+
+const exportTask = () => {
+  state.loading = true
+  exporter(props.taskName.split(","))
 }
 </script>
 

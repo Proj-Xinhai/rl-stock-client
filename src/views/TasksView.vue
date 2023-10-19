@@ -68,8 +68,8 @@ watch (state, (newVal) => {
       </div>
     </div>
   </div>
-  <div class="ts-grid is-end-aligned">
-    <router-link :to="{ name: 'task-create' }"><button class="ts-button">Create</button></router-link>
+  <div class="ts-grid has-full-width is-end-aligned" style="position: relative">
+    <router-link :to="{ name: 'task-create' }" style="position: absolute"><button class="ts-button">Create</button></router-link>
   </div>
   <TheTasksList />
 </template>

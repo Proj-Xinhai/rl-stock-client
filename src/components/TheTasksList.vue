@@ -67,6 +67,11 @@ watch (tasksSelected, () => {
 </script>
 
 <template>
+  <div class="ts-wrap is-compact">
+    <TheTaskRemover :task-name="tasksSelected.join(',')" wrapper="button" v-if="complexSelectedStatus" />
+    <TheTaskExporter :task-name="tasksSelected.join(',')" wrapper="button" v-if="complexSelectedStatus" />
+    <button class="ts-button" style="visibility: hidden" @click="console.log('てへぺろ')"></button><!-- This is placeholder -->
+  </div>
   <div class="ts-box u-top-spaced">
     <table class="ts-table is-celled is-single-line">
       <thead>
