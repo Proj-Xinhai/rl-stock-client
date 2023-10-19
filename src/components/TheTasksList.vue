@@ -64,6 +64,11 @@ watch (tasksSelected, () => {
   complexSelectedStatus.value = tasksSelected.value.length > 0
 })
 
+watch (tasks, () => {
+  // if tasks are removed, remove selected tasks
+  tasksSelected.value = tasksSelected.value.filter((taskName) => tasks.value.map(({name}) => name).includes(taskName))
+})
+
 </script>
 
 <template>
