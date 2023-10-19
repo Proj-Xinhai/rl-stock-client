@@ -44,11 +44,13 @@ const setConfirm = () => {
 <template>
   <button v-if="wrapper == 'button'" class="ts-button is-outlined is-negative" @click="setConfirm">Remove</button>
   <button v-else class="item" @click="setConfirm">Remove</button>
-  <TheConfirm title="Confirm removal"
-              accent="negative"
-              :message="message"
-              :check="confirm"
-              :confirm="() => removeTask()"
-              :cancel="() => confirm = ''"
-              v-if="confirm !== ''" />
+  <teleport to="#app">
+    <TheConfirm title="Confirm removal"
+                accent="negative"
+                :message="message"
+                :check="confirm"
+                :confirm="() => removeTask()"
+                :cancel="() => confirm = ''"
+                v-if="confirm !== ''" />
+  </teleport>
 </template>
