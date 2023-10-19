@@ -42,12 +42,8 @@ const setConfirm = () => {
 </script>
 
 <template>
-  <div v-if="wrapper == 'button'">
-    <button class="ts-button is-outlined is-negative" @click="setConfirm">Remove</button>
-  </div>
-  <div v-else>
-    <a class="ts-text is-link has-cursor-pointer" @click="setConfirm">Remove</a>
-  </div>
+  <button v-if="wrapper == 'button'" class="ts-button is-outlined is-negative" @click="setConfirm">Remove</button>
+  <button v-else class="item" @click="setConfirm">Remove</button>
   <TheConfirm title="Confirm removal"
               accent="negative"
               :message="message"

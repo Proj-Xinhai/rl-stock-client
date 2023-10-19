@@ -19,10 +19,6 @@ const copyTask = () => {
 </script>
 
 <template>
-  <div v-if="wrapper == 'button'">
-    <button class="ts-button is-outlined" @click="copyTask">Copy</button>
-  </div>
-  <div v-else>
-    <a class="ts-text is-link has-cursor-pointer" @click="copyTask">Copy</a>
-  </div>
+  <button v-if="wrapper == 'button'" class="ts-button is-outlined" @click="copyTask">Copy</button>
+  <button v-else class="item" @click="copyTask">Copy</button>
 </template>

@@ -90,20 +90,35 @@ watch (tasks, () => {
         <th v-for="col in ['Name', 'Algorithm', 'Create At']" @click="sort(col, true)">
           {{ col }} <span class="ts-icon" :class="{ 'is-sort-down-icon': sortDirection == -1, 'is-sort-up-icon': sortDirection == 1 }" v-if="sortBy == col"></span>
         </th>
+        <th class="is-collapsed"></th>
       </tr>
       </thead>
       <tbody>
       <template v-for="task in tasks" :key="task.name">
-        <tr class="has-cursor-pointer" :data-toggle="task.name+':has-hidden'" @dblclick="router.push({ name: 'task', params: { name: task.name } })">
+        <tr class="has-cursor-pointer"
+            @click="router.push({ name: 'task', params: { name: task.name } })">
           <td class="is-compact" @click.stop @dblclick.stop>
             <label class="ts-checkbox is-solo">
               <input type="checkbox" :id="task.name" :value="task.name" v-model="tasksSelected" />
             </label>
           </td>
-          <td>{{ task.name }}</td>
+          <td>
+            <span :data-tooltip="`algorithm: ${task.args.algorithm} ${JSON.stringify(task.args.algorithm_args)}
+            learn: ${JSON.stringify(task.args.learn_args)}
+            helper: ${task.args.helper}`">{{ task.name }}</span>
+          </td>
           <td class="is-collapsed">{{ task.args.algorithm }}</td>
           <td class="is-collapsed">{{ task.date }}</td>
+          <td colspan="is-compact" @click.stop>
+            <span class="ts-icon is-ellipsis-icon" :data-dropdown="'dropdown-'+task.name"></span>
+            <div class="ts-dropdown" :data-name="'dropdown-'+task.name">
+              <TheTaskRemover :task-name="task.name" wrapper="link" />
+              <TheTaskExporter :taskName="task.name" wrapper="link" />
+              <TheTaskCopier :task-name="task.name" wrapper="link" />
+            </div>
+          </td>
         </tr>
+        <!--
         <tr class="has-hidden" :data-name="task.name">
           <td class="is-secondary is-padded is-insetted" colspan="4">
             <div class="ts-grid">
@@ -121,6 +136,7 @@ watch (tasks, () => {
             </div>
           </td>
         </tr>
+        -->
       </template>
       </tbody>
     </table>
