@@ -87,9 +87,6 @@ watch (state, () => {
       <span class="ts-text is-code">#{{ work.id }}</span>
     </div>
     <TheWorkExporter wrapper="button" :work-id="work.id" :disabled="work.status !== 2" />
-    <!--<button class="ts-button is-outlined"
-            :class="{ 'is-disabled': work.status !== 2, 'has-cursor-not-allowed': work.status !== 2 }"
-            @click="exportWork">Export</button>-->
   </div>
 
   <div class="ts-timeline u-top-spaced">
