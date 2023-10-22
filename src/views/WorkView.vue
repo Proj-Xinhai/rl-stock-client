@@ -14,11 +14,11 @@ const task = ref<Task>({
     algorithm: '',
     algorithm_args: {},
     learn_args: {},
-    helper: ''
+    data_locator: '',
+    random_state: ''
   },
   date: '',
   data_example: '',
-  preprocess_example: ''
 })
 const work = ref<Work>({
   id: '',
@@ -32,6 +32,7 @@ const work = ref<Work>({
 const now = ref<number>(Date.now() / 1000)
 
 const renderScalars = ref<boolean>(true)
+const showOutlier = ref<boolean>(false)
 
 const load = () => {
   if (state.tasks.length != 0 && state.works.length != 0) {
@@ -77,7 +78,10 @@ watch (state, () => {
 
 <template>
   <div style="position: fixed; top: 0; right: 0;">
-    <button class="ts-button is-circular is-outlined u-spaced-big" @click="refresh">refresh</button>
+    <div class="ts-wrap is-vertical u-spaced-big">
+      <button class="ts-button is-circular is-outlined" @click="refresh">refresh</button>
+      <button class="ts-button is-circular" :class="{ 'is-outlined': !showOutlier }" @click="showOutlier = !showOutlier">outlier</button>
+    </div>
   </div>
   <div class="ts-wrap is-middle-aligned">
     <div>
@@ -115,7 +119,7 @@ watch (state, () => {
               </div>
             </div>
           </div>
-          <TheScalars :uuid="<string>router.currentRoute.value.params.id" :timeline="timeline.name" v-if="renderScalars" />
+          <TheScalars :uuid="<string>router.currentRoute.value.params.id" :timeline="timeline.name" :show-outliers="showOutlier" v-if="renderScalars" />
         </div>
       </div>
     </template>

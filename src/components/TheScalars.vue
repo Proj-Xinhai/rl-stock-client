@@ -9,6 +9,7 @@ import ThePlaceholder from "@/components/ThePlaceholder.vue"
 const props = defineProps<{
   uuid: string
   timeline: string
+  showOutliers: boolean
 }>()
 
 const scalars = ref<{ [index: string]: ScalarGroup[] }>({})
@@ -16,6 +17,7 @@ const onInitReady = ref<boolean>(false)
 const scalarLoading = ref<boolean>(false)
 
 const reloadScalar = () => {
+  console.log('reload scalar')
 
   scalarLoading.value = true
   const args = {
@@ -28,6 +30,53 @@ const reloadScalar = () => {
     onInitReady.value = true
     scalarLoading.value = false
   })
+}
+
+const removeOutliers = (data: number[]) => {
+  const mean = data.reduce((a, b) => a + b) / data.length
+  const std = Math.sqrt(data.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / data.length)
+  return <[number[], number]>[data.map((value) => {
+    return value > mean + std * 2 || value < mean - std * 2 ? undefined : value
+  }), std]
+}
+
+const calculateMeans = (data: number[]) => {
+  const [outliersRemoved, std] = removeOutliers(data)  // TODO: 到底要不要移除 outlier
+  const means: number[] = []
+  let sum = 0
+  let count = 1
+  outliersRemoved.forEach((value, index) => {
+    if (value != undefined) {
+      sum += value
+      means.push(sum / count)
+      count ++
+    } else {
+      means.push(undefined)
+    }
+  })
+  return means
+}
+
+const generateScalar = (step: number[], data: number[], type: string = 'default') => {
+  const datas = []
+  datas.push({
+    x: step,
+    y: props.showOutliers ? data : removeOutliers(data)[0],
+    mode: type == 'default' ? 'lines' : 'markers',
+    name: 'value'
+  })
+  if (type == 'dot') {
+    datas.push({
+      x: step,
+      y: calculateMeans(data),
+      mode: 'lines',
+      line: {
+        color: 'red'
+      },
+      name: 'mean'
+    })
+  }
+  return datas
 }
 
 onMounted(() => {
@@ -43,7 +92,7 @@ onMounted(() => {
     <div class="ts-box u-top-spaced" v-for="scalar in group.data" :key="scalar.tag">
       <div class="ts-content is-fitted">
         <VuePlotly
-          :data="[{x: group.step, y: scalar.value}]"
+          :data="generateScalar(group.step, scalar.value, scalar.tag.startsWith('env/roi') ? 'dot' : 'default')"
           :layout="{template: template, title: scalar.tag }"
           :config="{ modeBarButtonsToAdd: [
             {

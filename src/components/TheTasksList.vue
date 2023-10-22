@@ -105,7 +105,8 @@ watch (tasks, () => {
           <td>
             <span :data-tooltip="`algorithm: ${task.args.algorithm} ${JSON.stringify(task.args.algorithm_args)}
             learn: ${JSON.stringify(task.args.learn_args)}
-            helper: ${task.args.helper}`">{{ task.name }}</span>
+            random_state: ${task.args.random_state ? task.args.random_state : 'None'}
+            data_locator: ${task.args.data_locator}`">{{ task.name }}</span>
           </td>
           <td class="is-collapsed">{{ task.args.algorithm }}</td>
           <td class="is-collapsed">{{ task.date }}</td>
@@ -118,25 +119,6 @@ watch (tasks, () => {
             </div>
           </td>
         </tr>
-        <!--
-        <tr class="has-hidden" :data-name="task.name">
-          <td class="is-secondary is-padded is-insetted" colspan="4">
-            <div class="ts-grid">
-              <div class="column">
-                algorithm: {{ task.args.algorithm }} {{ task.args.algorithm_args }}<br />
-                learn: {{ task.args.learn_args }}<br />
-                helper: {{ task.args.helper }}<br />
-              </div>
-              <div class="column is-fluid is-end-aligned" style="white-space: initial !important">
-                <router-link class="ts-text is-link" :to="{ name: 'task', params: { name: task.name }}">manage</router-link>
-                <TheTaskRemover :task-name="task.name" wrapper="link" />
-                <TheTaskExporter :taskName="task.name" wrapper="link" />
-                <TheTaskCopier :task-name="task.name" wrapper="link" />
-              </div>
-            </div>
-          </td>
-        </tr>
-        -->
       </template>
       </tbody>
     </table>

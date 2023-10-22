@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import TheConfirm from "@/components/TheConfirm.vue"
 import { socket, state } from "@/socket";
+
+const router = useRouter()
 
 const props = defineProps<{
   taskName: string
@@ -20,6 +23,9 @@ const remover = (taskNames: string[]) => {
     } else {
       state.loading = false
       confirm.value = ''
+      // if (router.currentRoute.value.name == "task" ) {
+      //   router.push({ name: 'tasks' })
+      // }
     }
   })
 }

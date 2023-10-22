@@ -9,11 +9,11 @@ export type Task = {
     algorithm: string
     algorithm_args: { [ key: string]: string }
     learn_args: { [ key: string]: string }
-    helper: string
+    data_locator: string
+    random_state: string
   }
   date: string
   data_example: string
-  preprocess_example: string
 }
 
 export type Timeline = {
@@ -41,7 +41,7 @@ export type State = {
   tasks: Task[]
   works: Work[]
   algorithms: Algorithm[]
-  helpers: Helper[]
+  data_locators: DataLocator[]
 }
 
 export type Scalar = {
@@ -61,7 +61,7 @@ export type Algorithm = {
   args: []
 }
 
-export type Helper = {
+export type DataLocator = {
   name: string
   description: string
 }
@@ -73,7 +73,7 @@ export const state = reactive<State>({
   tasks: [],
   works: [],
   algorithms: [],
-  helpers: []
+  data_locators: []
 })
 
 const ping = () => {
@@ -135,8 +135,8 @@ socket.on('update_works', (works) => {
   state.works = works
 })
 
-socket.on('update_helper', (helpers) => {
-  state.helpers = helpers
+socket.on('update_data_locator', (data_locators) => {
+  state.data_locators = data_locators
 })
 
 socket.on('update_algorithm', (algorithms) => {

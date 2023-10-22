@@ -17,6 +17,23 @@ const sortDirection = ref<number>(-1) // -1: desc, 1: asc
 const worksSelected = ref<string[]>([])
 const complexSelectedStatus = ref<boolean>(false)
 
+const showEvaluations = ref<boolean>(false)
+const evaluations = ref<{ [key: string]: string }[][]>([])
+const evaluationsAvailability = ref<boolean>(false)
+
+const updateEvaluations = () => {
+  evaluationsAvailability.value = true
+  evaluations.value = []
+  worksSelected.value.forEach((id) => {
+    const work = works.value.find(({id: _id}) => _id == id) as Work
+    if (work.evaluation.length == 0) {
+      evaluationsAvailability.value = false
+    }
+    evaluations.value.push(work.evaluation)
+    console.log(evaluations.value)
+  })
+}
+
 const complexSelected = async () => {
   if (worksSelected.value.length == works.value.length) {
     worksSelected.value = []
@@ -77,11 +94,16 @@ watch (state, () => {
 
 watch (worksSelected, () => {
   complexSelectedStatus.value = worksSelected.value.length > 0
+  updateEvaluations()
 })
 
 </script>
 
 <template>
+  <div class="ts-wrap is-compact is-middle-aligned">
+    <button class="ts-button is-outlined" :class="{ 'is-disabled': !evaluationsAvailability }" v-if="complexSelectedStatus" @click="showEvaluations = true">Evaluations</button>
+    <button class="ts-button" style="visibility: hidden" @click="console.log('てへぺろ')"></button><!-- This is placeholder -->
+  </div>
   <div class="ts-box u-top-spaced">
     <table class="ts-table is-celled is-single-line">
       <thead>
@@ -115,5 +137,39 @@ watch (worksSelected, () => {
       </template>
       </tbody>
     </table>
+  </div>
+
+  <div class="ts-modal is-big is-visible" v-if="showEvaluations">
+    <div class="content">
+      <div class="ts-content">
+        <div class="ts-grid is-middle-aligned">
+          <div class="column is-fluid">
+            <div class="ts-header">Ev</div>
+          </div>
+          <div class="column">
+            <button class="ts-close" @click="showEvaluations = false"></button>
+          </div>
+        </div>
+      </div>
+      <div class="ts-divider"></div>
+      <div class="ts-content">
+        <table class="ts-table is-single-line">
+          <thead>
+            <tr>
+              <th>id</th>
+              <th>a</th>
+              <th>b</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>a</td>
+              <td>a</td>
+              <td>a</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </template>

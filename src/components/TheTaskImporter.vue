@@ -7,7 +7,8 @@ const props = defineProps<{
     algorithm: Ref<string>,
     algorithm_args: Ref<{[ key: string]: string }[]>,
     learn_args: Ref<{[ key: string]: string }[]>,
-    helper: Ref<string>,
+    data_locator: Ref<string>,
+    random_state: Ref<string>
   }
 }>()
 const importTask = () => {
@@ -33,7 +34,8 @@ const importTask = () => {
           for (const key in data.learn_args) {
             parentWrapper.learn_args.value.push({key: key, value: data.learn_args[key]})
           }
-          parentWrapper.helper.value = data.helper
+          parentWrapper.data_locator.value = data.data_locator
+          parentWrapper.random_state.value = data.random_state
         }
       }
     }

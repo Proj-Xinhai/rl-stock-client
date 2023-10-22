@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { state, socket, type Algorithm, type Helper } from '@/socket'
+import { state, socket, type Algorithm, type DataLocator } from '@/socket'
 import { watch, ref, onMounted } from "vue"
 import { useRouter, useRoute, onBeforeRouteLeave } from 'vue-router'
 import TheTaskImporter from "@/components/TheTaskImporter.vue"
@@ -8,13 +8,14 @@ const route = useRoute()
 const router = useRouter()
 
 const algorithms = ref<Algorithm[]>([])
-const helpers = ref<Helper[]>([])
+const data_locators = ref<DataLocator[]>([])
 
 const name = ref<string>('')
 const algorithm = ref<string>('')
 const algorithm_args = ref<{[ key: string]: string }[]>([])
 const learn_args = ref<{[ key: string]: string }[]>([])
-const helper = ref<string>('')
+const data_locator = ref<string>('')
+const random_state = ref<string>('')
 
 let leave_lock = true
 
@@ -23,14 +24,15 @@ const parentWrapper = {
   algorithm: algorithm,
   algorithm_args: algorithm_args,
   learn_args: learn_args,
-  helper: helper
+  data_locator: data_locator,
+  random_state: random_state
 }
 
 const createError = ref<string>('')
 
 const loadOptions = () => {
   algorithms.value = state.algorithms
-  helpers.value = state.helpers
+  data_locators.value = state.data_locators
 }
 
 const addAlgorithmArg = () => {
@@ -65,7 +67,8 @@ const createTask = () => {
     algorithm: algorithm.value,
     algorithm_args: temp_algorithm_args,
     learn_args: temp_learn_args,
-    helper: helper.value
+    data_locator: data_locator.value,
+    random_state: random_state.value
   }, (status: boolean, msg: string, detail: string) => {
     state.loading = false
     if (status) {
@@ -91,7 +94,8 @@ const copyTask = () => {
     for (const [key, value] of Object.entries(taskToCopy.args.learn_args)) {
       learn_args.value.push({key: key, value: value as unknown as string})
     }
-    helper.value = taskToCopy.args.helper
+    data_locator.value = taskToCopy.args.data_locator
+    random_state.value = taskToCopy.args.random_state
 
     // remove query
     router.replace({ query: {} })
@@ -218,13 +222,21 @@ watch (state, () => {
       </div>
     </div>
     <div class="ts-control">
-      <div class="label is-start-aligned">helper</div>
+      <div class="label is-start-aligned">data_locator</div>
       <div class="content">
         <div class="ts-select is-fluid">
-          <select class="ts-text is-secondary" v-model="helper">
-            <option v-for="helper in helpers" :value="helper.name" :key="helper.name">{{ helper.name }}: {{ helper.description }}</option>
-            <option selected disabled hidden>Choose helper</option>
+          <select class="ts-text is-secondary" v-model="data_locator">
+            <option v-for="data_locator in data_locators" :value="data_locator.name" :key="data_locator.name">{{ data_locator.name }}: {{ data_locator.description }}</option>
+            <option selected disabled hidden>Choose data_locator</option>
           </select>
+        </div>
+      </div>
+    </div>
+    <div class="ts-control">
+      <div class="label is-start-aligned">random_state</div>
+      <div class="content">
+        <div class="ts-input">
+          <input type="number" v-model="random_state">
         </div>
       </div>
     </div>
