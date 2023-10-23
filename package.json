@@ -19,6 +19,7 @@
     "plotly.js-basic-dist": "^2.26.2",
     "socket.io-client": "^4.7.2",
     "vue": "^3.3.4",
+    "vue-lazyload": "^3.0.0",
     "vue-router": "^4.2.4"
   },
   "devDependencies": {

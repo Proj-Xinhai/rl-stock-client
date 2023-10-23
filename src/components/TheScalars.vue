@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import { template } from "@/ploty"
-import { VuePlotly,  } from '@clalarco/vue3-plotly'
+import { VuePlotly } from '@clalarco/vue3-plotly'
 import Plotly from 'plotly.js-basic-dist'
 import { type ScalarGroup, type Scalar, socket } from "@/socket"
 import ThePlaceholder from "@/components/ThePlaceholder.vue"
@@ -115,27 +115,29 @@ onMounted(() => {
 </script>
 
 <template>
-  <ThePlaceholder :lines="3" v-if="!onInitReady" class="u-top-spaced" />
-  <details class="ts-accordion u-top-spaced" v-for="(group, index) in scalars" :key="index" v-show="scalars.length > 0">
-    <summary>{{ group.group }}</summary>
-    <div class="ts-box u-top-spaced" v-for="scalar in group.data" :key="scalar.tag">
-      <div class="ts-content is-fitted">
-        <VuePlotly
-          :data="scalar.scalar[props.showOutliers ? 'showOutliers' : 'hideOutliers']"
-          :layout="{template: template, title: scalar.tag }"
-          :config="{ modeBarButtonsToAdd: [
+  <ThePlaceholder :lines="3" v-show="!onInitReady" class="u-top-spaced" />
+  <lazy-component v-for="(group, index) in scalars" :key="index" v-show="scalars.length > 0">
+    <details class="ts-accordion u-top-spaced">
+      <summary>{{ group.group }}</summary>
+      <div class="ts-box u-top-spaced" v-for="scalar in group.data" :key="scalar.tag">
+        <lazy-component class="ts-content is-fitted">
+          <VuePlotly
+              :data="scalar.scalar[props.showOutliers ? 'showOutliers' : 'hideOutliers']"
+              :layout="{ template: template, title: scalar.tag }"
+              :config="{ modeBarButtonsToAdd: [
             {
               name: 'refresh',
               icon: Plotly.Icons.undo,
               click: reloadScalar
             }
           ] }"/>
-      </div>
-      <div class="ts-mask has-cursor-not-allowed" v-if="scalarLoading">
-        <div class="ts-center">
-          <div class="ts-loading is-large"></div>
+        </lazy-component>
+        <div class="ts-mask has-cursor-not-allowed" v-show="scalarLoading">
+          <div class="ts-center">
+            <div class="ts-loading is-large"></div>
+          </div>
         </div>
       </div>
-    </div>
-  </details>
+    </details>
+  </lazy-component>
 </template>
