@@ -68,7 +68,7 @@ const generateScalar = (step: number[], data: number[], type: string = 'default'
     showOutliers: <any>[],
     hideOutliers: <any>[]
   }
-  const [outliersRemoved, std] = props.showOutliers ? [data, undefined] : removeOutliers(data)
+  const [outliersRemoved, std] = removeOutliers(data)
   datas.showOutliers.push({
     type: 'scattergl',
     x: step,
@@ -120,7 +120,6 @@ onMounted(() => {
     <summary>{{ group.group }}</summary>
     <div class="ts-box u-top-spaced" v-for="scalar in group.data" :key="scalar.tag">
       <div class="ts-content is-fitted">
-        {{ props.showOutliers }}
         <VuePlotly
           :data="scalar.scalar[props.showOutliers ? 'showOutliers' : 'hideOutliers']"
           :layout="{template: template, title: scalar.tag }"
