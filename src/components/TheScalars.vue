@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import { template } from "@/ploty"
-import { VuePlotly } from '@clalarco/vue3-plotly'
+import { VuePlotly,  } from '@clalarco/vue3-plotly'
 import Plotly from 'plotly.js-basic-dist'
-import { type ScalarGroup, socket } from "@/socket"
+import { type ScalarGroup, type Scalar, socket } from "@/socket"
 import ThePlaceholder from "@/components/ThePlaceholder.vue"
 
 const props = defineProps<{
@@ -12,7 +12,7 @@ const props = defineProps<{
   showOutliers: boolean
 }>()
 
-const scalars = ref<{ [index: string]: ScalarGroup[] }>({})
+const scalars = ref<ScalarGroup[]>([])
 const onInitReady = ref<boolean>(false)
 const scalarLoading = ref<boolean>(false)
 
@@ -25,8 +25,15 @@ const reloadScalar = () => {
     gets: [props.timeline]
   }
 
-  socket.emit("get_scalar", args, (data: {}) => {
-    scalars.value = <{ train: ScalarGroup[], test: ScalarGroup[] }>data
+  socket.emit("get_scalar", args, (data: { [index: string]: ScalarGroup[] }) => {
+    if (data[props.timeline]) {
+      scalars.value = data[props.timeline]
+      scalars.value.forEach((group: ScalarGroup) => {
+        group.data.forEach((scalar: Scalar) => {
+          scalar.scalar = generateScalar(group.step, scalar.value, scalar.tag.startsWith('env/roi') ? 'dot' : 'default')
+        })
+      })
+    }
     onInitReady.value = true
     scalarLoading.value = false
   })
@@ -41,34 +48,56 @@ const removeOutliers = (data: number[]) => {
 }
 
 const calculateMeans = (data: number[]) => {
-  const [outliersRemoved, std] = removeOutliers(data)  // TODO: 到底要不要移除 outlier
   const means: number[] = []
   let sum = 0
   let count = 1
-  outliersRemoved.forEach((value, index) => {
+  data.forEach((value, index) => {
     if (value != undefined) {
       sum += value
       means.push(sum / count)
       count ++
     } else {
-      means.push(undefined)
+      means.push(NaN)
     }
   })
   return means
 }
 
 const generateScalar = (step: number[], data: number[], type: string = 'default') => {
-  const datas = []
-  datas.push({
+  const datas = {
+    showOutliers: <any>[],
+    hideOutliers: <any>[]
+  }
+  const [outliersRemoved, std] = props.showOutliers ? [data, undefined] : removeOutliers(data)
+  datas.showOutliers.push({
+    type: 'scattergl',
     x: step,
-    y: props.showOutliers ? data : removeOutliers(data)[0],
+    y: data,
+    mode: type == 'default' ? 'lines' : 'markers',
+    name: 'value'
+  })
+  datas.hideOutliers.push({
+    type: 'scattergl',
+    x: step,
+    y: outliersRemoved,
     mode: type == 'default' ? 'lines' : 'markers',
     name: 'value'
   })
   if (type == 'dot') {
-    datas.push({
+    datas.showOutliers.push({
+      type: 'scattergl',
       x: step,
       y: calculateMeans(data),
+      mode: 'lines',
+      line: {
+        color: 'red'
+      },
+      name: 'mean'
+    })
+    datas.hideOutliers.push({
+      type: 'scattergl',
+      x: step,
+      y: calculateMeans(outliersRemoved),
       mode: 'lines',
       line: {
         color: 'red'
@@ -87,12 +116,13 @@ onMounted(() => {
 
 <template>
   <ThePlaceholder :lines="3" v-if="!onInitReady" class="u-top-spaced" />
-  <details class="ts-accordion u-top-spaced" v-for="group in scalars[timeline]" :key="group.group">
+  <details class="ts-accordion u-top-spaced" v-for="(group, index) in scalars" :key="index" v-show="scalars.length > 0">
     <summary>{{ group.group }}</summary>
     <div class="ts-box u-top-spaced" v-for="scalar in group.data" :key="scalar.tag">
       <div class="ts-content is-fitted">
+        {{ props.showOutliers }}
         <VuePlotly
-          :data="generateScalar(group.step, scalar.value, scalar.tag.startsWith('env/roi') ? 'dot' : 'default')"
+          :data="scalar.scalar[props.showOutliers ? 'showOutliers' : 'hideOutliers']"
           :layout="{template: template, title: scalar.tag }"
           :config="{ modeBarButtonsToAdd: [
             {
@@ -101,7 +131,6 @@ onMounted(() => {
               click: reloadScalar
             }
           ] }"/>
-        <div id="test"></div>
       </div>
       <div class="ts-mask has-cursor-not-allowed" v-if="scalarLoading">
         <div class="ts-center">

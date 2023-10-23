@@ -38,6 +38,10 @@ export type State = {
   connected: boolean
   ping: number
   loading: boolean
+  git: {
+    hash: string
+    branch: string
+  }
   tasks: Task[]
   works: Work[]
   algorithms: Algorithm[]
@@ -47,6 +51,10 @@ export type State = {
 export type Scalar = {
   tag: string
   value: number[]
+  scalar: {
+    showOutliers: []
+    hideOutliers: []
+  }
 }
 
 export type ScalarGroup = {
@@ -70,6 +78,10 @@ export const state = reactive<State>({
   connected: false,
   ping: 0,
   loading: false,
+  git: {
+    hash: '',
+    branch: ''
+  },
   tasks: [],
   works: [],
   algorithms: [],
@@ -117,6 +129,8 @@ socket.on('git_version', (hash: string, branch: string) => {
   }
 
   if (hash !== undefined) {
+    state.git.hash = hash
+    state.git.branch = branch
     Axios.get(`https://api.github.com/repos/Proj-Xinhai/rl-stock/branches/${branch}`).then((res: { data: { commit: { sha: string } } }) => {
       if (res.data.commit.sha !== hash) {
         alert('Warning: The server has been updated, please update it to the latest version.')

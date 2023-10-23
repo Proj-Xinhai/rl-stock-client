@@ -42,6 +42,11 @@ const router = createRouter({
       path: '/task/work/create',
       name: 'work-create',
       component: () => import('../views/WorkCreateView.vue')
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'not-found',
+      component: () => import('../views/NotFoundView.vue')
     }
   ]
 })

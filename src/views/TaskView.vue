@@ -38,15 +38,13 @@ const view_modal = ref<boolean>(false)
 
 const loadTask = () => {
   if (state.tasks.length != 0) {
-    task.value = state.tasks.find(({name}) => name == router.currentRoute.value.params.name) as Task
-    if (task.value) {
-      task_name.value = task.value.name
-      algorithm.value = task.value.args.algorithm
-      algorithm_args.value = task.value.args.algorithm_args as unknown as string
-      learn_args.value = task.value.args.learn_args as unknown as string
-      data_example.value = Papa.parse<string>(task.value.data_example, {skipEmptyLines: true}).data
-      random_state.value = task.value.args.random_state
-    }
+    task.value = state.tasks.find(({name}) => name == router.currentRoute.value.params.name) as Task || task.value
+    task_name.value = task.value.name
+    algorithm.value = task.value.args.algorithm
+    algorithm_args.value = task.value.args.algorithm_args as unknown as string
+    learn_args.value = task.value.args.learn_args as unknown as string
+    data_example.value = Papa.parse<string>(task.value.data_example, {skipEmptyLines: true}).data
+    random_state.value = task.value.args.random_state
   }
   loaded.value = !state.loading && state.connected
   console.log(loaded.value)

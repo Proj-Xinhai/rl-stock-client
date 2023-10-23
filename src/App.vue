@@ -152,15 +152,19 @@ watch(state, (newVal) => {
           </div>
         </div>
       </div>
+      <div class="ts-content is-center-aligned">
+        <div class="ts-text is-secondary">version: {{ state.git.hash.slice(0, 7) }}</div>
+        <div class="ts-text is-secondary">branch: {{ state.git.branch }}</div>
+      </div>
     </div>
     <div class="cell is-fluid is-secondary is-scrollable" style="color: var(--ts-white)">
       <div class="ts-container is-narrow has-vertically-padded-large">
         <RouterView />
       </div>
-      <div class="ts-mask has-cursor-not-allowed" v-show="!wsConnected || wsLoading">
-        <div class="ts-center">
-          <div class="ts-loading is-large"></div>
-        </div>
+    </div>
+    <div class="ts-mask has-cursor-not-allowed" v-show="!wsConnected || wsLoading">
+      <div class="ts-center">
+        <div class="ts-loading is-large"></div>
       </div>
     </div>
   </div>
