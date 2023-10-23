@@ -43,7 +43,7 @@ const removeOutliers = (data: number[]) => {
   const mean = data.reduce((a, b) => a + b) / data.length
   const std = Math.sqrt(data.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / data.length)
   return <[number[], number]>[data.map((value) => {
-    return value > mean + std * 2 || value < mean - std * 2 ? undefined : value
+    return value > mean + std * 3 || value < mean - std * 3 ? undefined : value
   }), std]
 }
 
