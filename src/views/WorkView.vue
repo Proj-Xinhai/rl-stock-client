@@ -86,7 +86,7 @@ watch (state, () => {
       <template v-for="timeline in work.timeline" :key="timeline.name">
         <div class="item" :class="{ 'is-negative': timeline.status == -1 }">
           <div class="aside" style="width: 100px">
-            <div class="ts-text is-description" v-if="timeline.from !== 0">
+            <div class="ts-text is-description" v-if="timeline.from !== 0" style="position: sticky; top: 20px; z-index: 1">
               <span v-if="timeline.to == 0">{{ convertTime((now - timeline.from)) }}</span>
               <span v-else>{{ convertTime(timeline.to - timeline.from) }}</span>
             </div>
@@ -97,7 +97,7 @@ watch (state, () => {
             'is-xmark-icon': timeline.status == -1,
             'is-plus-icon': timeline.status == 0,
             'is-spinning is-spinner-icon': timeline.status == 1,
-            'is-check-icon': timeline.status == 2 }"></span>
+            'is-check-icon': timeline.status == 2 }" style="position: sticky; top: 20px; z-index: 1"></span>
           </div>
           <div class="content">
             {{ timeline.name }}

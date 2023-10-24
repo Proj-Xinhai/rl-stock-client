@@ -46,7 +46,7 @@ watch(() => props.timelineStatus, () => {
 <template>
   <ThePlaceholder :lines="3" v-show="!onInitReady" class="u-top-spaced" />
   <div style="position: absolute; top: 30px; left: -145px; height: calc(100% - 30px)" v-show="scalars.length > 0">
-    <div class="ts-wrap is-vertical" style="position: sticky; top: 20px">
+    <div class="ts-wrap is-vertical" style="position: sticky; top: 50px">
       <button class="ts-button is-circular is-outlined"
               @click="reloadScalar">refresh</button>
       <button class="ts-button is-circular"
