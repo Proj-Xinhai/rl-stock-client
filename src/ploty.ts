@@ -1,4 +1,4 @@
-import { type Template, type ErrorBar, type PlotData, type Layout } from 'plotly.js-basic-dist'
+import { type Template, type ErrorBar, type PlotData, type Layout } from 'plotly.js-dist-min'
 
 export const template: Template = {
   "data": {
