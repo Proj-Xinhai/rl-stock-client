@@ -17,6 +17,7 @@
     "csv-string": "^4.1.1",
     "papaparse": "^5.4.1",
     "plotly.js-basic-dist": "^2.26.2",
+    "plotly.js-dist-min": "^2.27.0",
     "socket.io-client": "^4.7.2",
     "vue": "^3.3.4",
     "vue-lazyload": "^3.0.0",

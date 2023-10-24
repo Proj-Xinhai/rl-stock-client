@@ -44,7 +44,6 @@ const load = () => {
 }
 
 const refresh = async () => {
-  console.log('refresh')
   renderScalars.value = false
   await nextTick()
   renderScalars.value = true
@@ -80,12 +79,14 @@ watch (state, () => {
 
 <template>
   <template v-if="work.id !== ''">
+    <!--
     <div style="position: fixed; top: 0; right: 0; z-index: 1">
       <div class="ts-wrap is-vertical u-spaced-big">
         <button class="ts-button is-circular is-outlined" @click="refresh">refresh</button>
         <button class="ts-button is-circular" :class="{ 'is-outlined': !showOutlier }" @click="showOutlier = !showOutlier">outlier</button>
       </div>
     </div>
+    -->
     <div class="ts-wrap is-middle-aligned">
       <div>
         <div class="ts-header is-huge">
@@ -114,7 +115,7 @@ watch (state, () => {
             'is-check-icon': timeline.status == 2 }"></span>
           </div>
           <div class="content">
-            {{ timeline.name }} <!--<span class="ts-icon is-arrows-rotate-icon has-cursor-pointer" :class="{ 'is-spinning': scalarLoading }" @click="reloadScalar"></span>-->
+            {{ timeline.name }}
             <div class="ts-box u-top-spaced" v-if="timeline.status == -1">
               <div class="ts-content is-tertiary">
                 <div class="ts-text is-negative">
