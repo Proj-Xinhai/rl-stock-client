@@ -10,6 +10,7 @@ export type Task = {
     algorithm_args: { [ key: string]: string }
     learn_args: { [ key: string]: string }
     data_locator: string
+    environment: string
     random_state: string
   }
   date: string
@@ -46,6 +47,7 @@ export type State = {
   works: Work[]
   algorithms: Algorithm[]
   data_locators: DataLocator[]
+  environments: Environment[]
 }
 
 export type Scalar = {
@@ -53,7 +55,7 @@ export type Scalar = {
   value: number[]
   scalar: {
     showOutliers: []
-    hideOutliers: []
+    hideOutliers: number[]
   }
 }
 
@@ -74,6 +76,11 @@ export type DataLocator = {
   description: string
 }
 
+export type Environment = {
+  name: string
+  description: string
+}
+
 export const state = reactive<State>({
   connected: false,
   ping: 0,
@@ -85,7 +92,8 @@ export const state = reactive<State>({
   tasks: [],
   works: [],
   algorithms: [],
-  data_locators: []
+  data_locators: [],
+  environments: []
 })
 
 const ping = () => {
@@ -149,10 +157,14 @@ socket.on('update_works', (works) => {
   state.works = works
 })
 
+socket.on('update_algorithm', (algorithms) => {
+  state.algorithms = algorithms
+})
+
 socket.on('update_data_locator', (data_locators) => {
   state.data_locators = data_locators
 })
 
-socket.on('update_algorithm', (algorithms) => {
-  state.algorithms = algorithms
+socket.on('update_environment', (environments) => {
+  state.environments = environments
 })

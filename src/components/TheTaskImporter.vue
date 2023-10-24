@@ -8,6 +8,7 @@ const props = defineProps<{
     algorithm_args: Ref<{[ key: string]: string }[]>,
     learn_args: Ref<{[ key: string]: string }[]>,
     data_locator: Ref<string>,
+    environment: Ref<string>,
     random_state: Ref<string>
   }
 }>()
@@ -35,6 +36,7 @@ const importTask = () => {
             parentWrapper.learn_args.value.push({key: key, value: data.learn_args[key]})
           }
           parentWrapper.data_locator.value = data.data_locator
+          parentWrapper.environment.value = data.environment
           parentWrapper.random_state.value = data.random_state
         }
       }

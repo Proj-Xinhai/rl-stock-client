@@ -18,6 +18,7 @@ const task = ref<Task>({
     algorithm_args: {},
     learn_args: {},
     data_locator: '',
+    environment: '',
     random_state: ''
   },
   date: '',
@@ -29,6 +30,8 @@ const algorithm = ref<string>('')
 const algorithm_args = ref<string>('')
 const learn_args = ref<string>('')
 const data_example = ref<string[]>([])
+const data_locator = ref<string>('')
+const environment = ref<string>('')
 const random_state = ref<string>('')
 
 const loaded = ref<boolean>(true)
@@ -44,10 +47,11 @@ const loadTask = () => {
     algorithm_args.value = task.value.args.algorithm_args as unknown as string
     learn_args.value = task.value.args.learn_args as unknown as string
     data_example.value = Papa.parse<string>(task.value.data_example, {skipEmptyLines: true}).data
+    data_locator.value = task.value.args.data_locator
+    environment.value = task.value.args.environment
     random_state.value = task.value.args.random_state
   }
   loaded.value = !state.loading && state.connected
-  console.log(loaded.value)
 }
 
 const createWork = () => {
@@ -95,12 +99,17 @@ watch (state, () => {
     </details>
     <div class="ts-space"></div>
     <details class="ts-accordion" open>
-      <summary>random_state</summary>
-      <span class="ts-text is-secondary">{{ random_state ? random_state : "None" }}</span>
+      <summary>environment</summary>
+      <span class="ts-text is-secondary">{{ environment }}: {{ state.environments.find((value) => value.name == environment)?.description }}</span>
+    </details>
+    <div class="ts-space"></div>
+    <details class="ts-accordion" open>
+      <summary>data_locator</summary>
+      <span class="ts-text is-secondary">{{ data_locator }}: {{ state.data_locators.find((value) => value.name == data_locator)?.description }}</span>
     </details>
     <div class="ts-space"></div>
     <details class="ts-accordion">
-      <summary>data</summary>
+      <summary>data_example</summary>
       <div class="ts-box">
         <table class="ts-table is-definition" style="display: block; overflow-x: auto">
           <thead>
@@ -115,6 +124,11 @@ watch (state, () => {
           </tbody>
         </table>
       </div>
+    </details>
+    <div class="ts-space"></div>
+    <details class="ts-accordion" open>
+      <summary>random_state</summary>
+      <span class="ts-text is-secondary">{{ random_state ? random_state : "None" }}</span>
     </details>
     <div class="ts-space"></div>
     <div class="ts-grid is-end-aligned u-top-spaced">
