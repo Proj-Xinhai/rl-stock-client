@@ -15,6 +15,7 @@ const task = ref<Task>({
     algorithm_args: {},
     learn_args: {},
     data_locator: '',
+    environment: '',
     random_state: ''
   },
   date: '',
