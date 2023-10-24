@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { state, type Task, type Work } from '@/socket'
-import { onMounted, ref, watch, nextTick } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { onBeforeRouteLeave, useRouter } from "vue-router"
 import TheScalars from "@/components/TheScalars.vue"
 import TheWorkExporter from "@/components/TheWorkExporter.vue"
@@ -31,8 +31,7 @@ const work = ref<Work>({
 })
 const now = ref<number>(Date.now() / 1000)
 const loaded = ref<boolean>(true)
-
-const renderScalars = ref<boolean>(true)
+const showOutlier = ref<boolean>(false)
 
 const load = () => {
   if (state.tasks.length != 0 && state.works.length != 0) {
@@ -40,12 +39,6 @@ const load = () => {
     work.value = state.works.find(({id}) => id == router.currentRoute.value.params.id) as Work || work.value
   }
   loaded.value = !state.loading && state.connected
-}
-
-const refresh = async () => {
-  renderScalars.value = false
-  await nextTick()
-  renderScalars.value = true
 }
 
 const updateNow = setInterval(() => {
@@ -114,7 +107,7 @@ watch (state, () => {
                 </div>
               </div>
             </div>
-            <TheScalars :uuid="<string>router.currentRoute.value.params.id" :timeline="timeline.name" v-if="renderScalars" />
+            <TheScalars :uuid="<string>router.currentRoute.value.params.id" :timeline="timeline.name" :timeline-status="timeline.status" />
           </div>
         </div>
       </template>

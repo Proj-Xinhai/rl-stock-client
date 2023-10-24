@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue"
+import { onMounted, watch, ref } from "vue"
 import { type ScalarGroup, socket } from "@/socket"
 import ThePlaceholder from "@/components/ThePlaceholder.vue"
 import TheScalar from "@/components/TheScalar.vue"
@@ -7,6 +7,7 @@ import TheScalar from "@/components/TheScalar.vue"
 const props = defineProps<{
   uuid: string
   timeline: string
+  timelineStatus: number
 }>()
 
 const scalars = ref<ScalarGroup[]>([])
@@ -36,11 +37,15 @@ onMounted(() => {
   reloadScalar()
 })
 
+watch(() => props.timelineStatus, () => {
+  reloadScalar()
+})
+
 </script>
 
 <template>
   <ThePlaceholder :lines="3" v-show="!onInitReady" class="u-top-spaced" />
-  <div style="position: absolute; top: 50px; left: -145px; height: calc(100% - 50px)" v-show="scalars.length > 0">
+  <div style="position: absolute; top: 30px; left: -145px; height: calc(100% - 30px)" v-show="scalars.length > 0">
     <div class="ts-wrap is-vertical" style="position: sticky; top: 20px">
       <button class="ts-button is-circular is-outlined"
               @click="reloadScalar">refresh</button>

@@ -42,7 +42,7 @@ const drawMeans = (data: number[]) => {
   return means
 }
 
-onMounted(() => {
+const updatePlot = () => {
   const y = outlierFilter(props.y)
   data.value = [{
     // type: "scattergl", // too many webgl context
@@ -61,28 +61,15 @@ onMounted(() => {
       }
     })
   }
-  Plotly.react(`${props.title}_${props.timeline}`, data.value, layout.value, config.value)
+  setTimeout(() => Plotly.react(`${props.title}_${props.timeline}`, data.value, layout.value, config.value), 0)
+}
+
+onMounted(() => {
+  updatePlot()
 })
 
 watch(props, () => {
-  const y = outlierFilter(props.y)
-  data.value = [{
-    x: props.x,
-    y: y,
-    mode: props.title.startsWith("env/roi") ? "markers" : "lines"
-  }]
-  if (props.title.startsWith("env/roi")) {
-    data.value.push({
-      x: props.x,
-      y: drawMeans(y),
-      mode: "lines",
-      line: {
-        color: "red",
-        width: 1
-      }
-    })
-  }
-  Plotly.react(`${props.title}_${props.timeline}`, data.value, layout.value, config.value)
+  updatePlot()
 })
 </script>
 
