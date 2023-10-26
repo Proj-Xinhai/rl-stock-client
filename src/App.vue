@@ -126,6 +126,22 @@ watch(state, (newVal) => {
           <a class="item" :class="[isActive && 'is-active', isExactActive && 'is-active']">works</a>
         </router-link>
       </div>
+      <div class="ts-divider"></div>
+      <div class="ts-content is-dense">
+        <div class="ts-grid">
+          <div class="column is-fluid">
+            <div class="ts-text is-bold">Result</div>
+          </div>
+          <div class="column">
+            <span class="ts-icon is-backward-icon"></span>
+          </div>
+        </div>
+      </div>
+      <div class="ts-menu is-dense is-small" style="opacity: 0.8">
+        <router-link :to="{ name: 'backtest' }" v-slot="{ isActive, isExactActive }">
+          <a class="item" :class="[isActive && 'is-active', isExactActive && 'is-active']">backtest</a>
+        </router-link>
+      </div>
       <div class="ts-divider has-top-spaced-small"></div>
       <div class="ts-divider"></div>
       <router-link :to="{ name: 'terminal' }" v-slot="{ isActive, isExactActive }">
