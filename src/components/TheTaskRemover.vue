@@ -23,10 +23,8 @@ const remover = (taskNames: string[]) => {
     } else {
       state.loading = false
       confirm.value = ''
-      // if (router.currentRoute.value.name == "task" ) {
-      //   router.push({ name: 'tasks' })
-      // }
     }
+    router.push({ name: 'tasks' })
   })
 }
 

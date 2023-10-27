@@ -8,7 +8,12 @@ const props = defineProps<{
 
 const exporter = (taskNames: string[]) => {
   const taskName = taskNames.shift()
-  socket.emit('export_task', taskName, (data: Task) => {
+  socket.emit('export_task', taskName, (status: boolean, msg: string, data: string | Task) => {
+    if (!status) {
+      alert(`${msg}: ${data}`)
+      state.loading = false
+      return
+    }
     const blob = new Blob([JSON.stringify(data)], { type: 'application/json' })
     const url = window.URL.createObjectURL(blob)
     Object.assign(document.createElement('a'), {

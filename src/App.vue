@@ -6,25 +6,27 @@ import { state, socket } from '@/socket'
 import { io } from 'socket.io-client'
 
 // data
-const services = ref<string[]>([])
+const services = ref<{ name: string, server: string, port: number }[]>([])
 const serviceError = ref<boolean>(false)
 const currentService = ref<string>('')
 const wsConnected = ref<boolean>(false)
 const wsLoading = ref<boolean>(false)
 const ping = ref<number>(0)
 
-const reloadServices = () => {
+const reloadServices = (port: number = 8000) => {
   serviceError.value = false
   services.value = []
 
   // namespace /service
-  const temp_socket = io('ws://rl-stock.local:8000/service', {
+  const temp_socket = io(`ws://rl-stock.local:${port}/service`, {
     transports: ['websocket']
   })
 
   temp_socket.on('connect', () => {
     console.log('connected')
-    temp_socket.emit('get_services', (data: string[]) => {
+    temp_socket.emit('get_services', (data: { name: string, server: string, port: number }[]) => {
+      temp_socket.off('connect_error')
+      serviceError.value = false
       console.log(data)
       services.value = data
       temp_socket.disconnect()
@@ -35,7 +37,13 @@ const reloadServices = () => {
     console.log('connect_error')
     console.log(err)
     serviceError.value = true
-    temp_socket.disconnect()
+    port += 1
+    if (port > 8005) {
+      temp_socket.disconnect()
+      return
+    }
+    // @ts-ignore
+    temp_socket.io.uri = `ws://rl-stock.local:${port}/service`
   })
 }
 
@@ -57,18 +65,7 @@ onBeforeMount(() => {
 })
 
 onMounted(() => {
-  // force http
-  // if (location.protocol !== 'http:') {
-  //   Object.assign(document.createElement("a"), {
-  //     href: `http:${location.href.substring(location.protocol.length)}`,
-  //     target: '_blank'
-  //   }).click()
-  // }
-  // if (location.protocol !== 'http:') {
-  //   location.replace(`http:${location.href.substring(location.protocol.length)}`)
-  // }
-
-  if (currentService.value == '') {
+  if (currentService.value == '' || !wsConnected.value) {
     reloadServices()
   }
   ping.value = state.ping
@@ -77,9 +74,10 @@ onMounted(() => {
 watch(currentService, (newVal: string) => {
   if (newVal !== '') {
     // @ts-ignore
-    socket.io.uri = `ws://${newVal}:8000/`
+    socket.io.uri = `ws://${newVal}/`
     socket.connect()
   } else {
+    reloadServices()
     socket.disconnect()
     // socket = null
   }
@@ -184,7 +182,7 @@ watch(state, (newVal) => {
       </div>
     </div>
   </div>
-  <div class="ts-modal" style="color: var(--ts-white)" v-bind:class="currentService == '' ? 'is-visible' : ''">
+  <div class="ts-modal is-visible" style="color: var(--ts-white)" v-if="currentService == '' || !wsConnected">
     <div class="content">
       <div class="ts-content">
         <div class="ts-grid is-middle-aligned">
@@ -192,7 +190,7 @@ watch(state, (newVal) => {
             <div class="ts-header">Search in local network</div>
           </div>
           <div class="column" v-show="services.length !== 0 || serviceError">
-            <button class="ts-icon is-arrow-rotate-left-icon" v-on:click="reloadServices"></button>
+            <button class="ts-icon is-arrow-rotate-left-icon" v-on:click="reloadServices()"></button>
           </div>
         </div>
       </div>
@@ -200,17 +198,22 @@ watch(state, (newVal) => {
       <div class="ts-content is-center-aligned">
         <ThePlaceholder :lines="3" v-show="services.length == 0 && !serviceError" />
         <div
-          class="ts-image is-rounded has-cursor-pointer"
+          class="ts-image is-rounded has-cursor-pointer has-spaced-small"
           style="max-width: 150px"
           v-show="services.length !== 0 && !serviceError"
           v-for="service in services"
-          :key="service"
-          v-on:click="setService(service)"
+          :key="service.name"
+          v-on:click="setService(`${service.server}:${service.port}`)"
         >
           <img src="./assets/placeholder.png" alt="" />
           <div class="ts-mask is-secondary is-bottom">
             <div class="ts-content is-compact is-start-aligned">
-              <div class="ts-badge is-secondary">{{ service }}</div>
+              <div class="ts-badge is-secondary">{{ service.name.split('.')[0] }}</div>
+            </div>
+          </div>
+          <div class="ts-mask has-cursor-not-allowed" v-show="currentService == `${service.server}:${service.port}`">
+            <div class="ts-center">
+              <div class="ts-loading is-large"></div>
             </div>
           </div>
         </div>
