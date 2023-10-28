@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
 import ThePlaceholder from './components/ThePlaceholder.vue'
-import { onBeforeMount, onMounted, ref, watch } from 'vue'
+import { onBeforeMount, onMounted, nextTick, ref, watch } from 'vue'
 import { state, socket } from '@/socket'
 import { io } from 'socket.io-client'
 
@@ -13,37 +13,43 @@ const wsConnected = ref<boolean>(false)
 const wsLoading = ref<boolean>(false)
 const ping = ref<number>(0)
 
-const reloadServices = (port: number = 8000) => {
+const tryPort = ref<number>(8000)
+
+const index_service = io(`ws://rl-stock.local:8000/service`, {
+  transports: ['websocket']
+})
+
+index_service.on('connect', () => {
+  console.log('connected')
+  index_service.emit('get_services', (data: { name: string, server: string, port: number }[]) => {
+    // index_service.removeListener('connect_error')
+    serviceError.value = false
+    services.value = data
+    index_service.disconnect()
+  })
+})
+
+index_service.on('connect_error', (err) => {
+  console.log('connect_error')
+  console.log(err)
+  index_service.disconnect()
+  serviceError.value = true
+  nextTick().then(() => {
+    // @ts-ignore
+    index_service.io.uri = `ws://rl-stock.local:${tryPort.value}/service`
+    index_service.connect()
+    tryPort.value += 1
+  })
+})
+
+const reloadServices = () => {
   serviceError.value = false
   services.value = []
-
-  // namespace /service
-  const temp_socket = io(`ws://rl-stock.local:${port}/service`, {
-    transports: ['websocket']
-  })
-
-  temp_socket.on('connect', () => {
-    console.log('connected')
-    temp_socket.emit('get_services', (data: { name: string, server: string, port: number }[]) => {
-      temp_socket.off('connect_error')
-      serviceError.value = false
-      console.log(data)
-      services.value = data
-      temp_socket.disconnect()
-    })
-  })
-
-  temp_socket.on('connect_error', (err) => {
-    console.log('connect_error')
-    console.log(err)
-    serviceError.value = true
-    port += 1
-    if (port > 8005) {
-      temp_socket.disconnect()
-      return
-    }
+  tryPort.value = 8000
+  nextTick().then(() => {
     // @ts-ignore
-    temp_socket.io.uri = `ws://rl-stock.local:${port}/service`
+    index_service.io.uri = `ws://rl-stock.local:${tryPort.value}/service`
+    index_service.connect()
   })
 }
 
@@ -196,7 +202,6 @@ watch(state, (newVal) => {
       </div>
       <div class="ts-divider"></div>
       <div class="ts-content is-center-aligned">
-        <ThePlaceholder :lines="3" v-show="services.length == 0 && !serviceError" />
         <div
           class="ts-image is-rounded has-cursor-pointer has-spaced-small"
           style="max-width: 150px"
@@ -217,7 +222,8 @@ watch(state, (newVal) => {
             </div>
           </div>
         </div>
-        <span class="ts-text is-negative" v-show="serviceError">No services detected</span>
+        <span class="ts-text is-negative" v-show="serviceError">No services detected, still trying another port...</span>
+        <ThePlaceholder :lines="3" v-show="services.length == 0" />
       </div>
     </div>
   </div>
