@@ -6,7 +6,7 @@ const stock = ref<string>("")
 const start = ref<string>("")
 const end = ref<string>("")
 const model = ref<string>("")
-const defaultBalance = ref<number>(null as unknown as number)
+const defaultBalance = ref<number>(<number><unknown>null)
 const mouseInTooltip = ref<boolean>(false)
 
 const backtest = () => {
@@ -57,7 +57,7 @@ const backtest = () => {
           &#8203</div>
         <div class="ts-input is-start-labeled">
           <span class="label">$</span>
-          <input type="number" min="0" v-model="defaultBalance" @focusout="defaultBalance <= 0 ? defaultBalance = 1 : null">
+          <input type="number" min="0" v-model="defaultBalance" @focusout="defaultBalance <= 0 ? defaultBalance = <number><unknown>null : null">
         </div>
       </div>
     </div>
