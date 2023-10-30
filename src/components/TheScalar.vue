@@ -66,10 +66,9 @@ const updatePlot = () => {
 
 onMounted(() => {
   updatePlot()
-})
-
-watch(props, () => {
-  updatePlot()
+  watch(props, () => {
+    updatePlot()
+  })
 })
 </script>
 
