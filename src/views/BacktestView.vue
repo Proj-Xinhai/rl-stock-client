@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { ref } from 'vue'
 import { state, socket } from '@/socket'
 
 const stock = ref<string>("")
@@ -9,6 +9,18 @@ const model = ref<string>("")
 const defaultBalance = ref<number>(<number><unknown>null)
 const mouseInTooltip = ref<boolean>(false)
 
+const roi = ref<number>(NaN)
+const actions = ref<{
+  date: string
+  original_action: number
+  action: string
+  trade: number
+  balance: number
+  hold: number
+  net: number
+  reward: number
+}[]>([])
+
 const backtest = () => {
   if (stock.value == "" || start.value == "" || end.value == "" || model.value == "" || !defaultBalance.value) return
   console.log(stock.value)
@@ -16,6 +28,21 @@ const backtest = () => {
   console.log(end.value)
   console.log(model.value)
   console.log(defaultBalance.value)
+  //stock: str, model: str, default_balance: int, start: str, end: str
+  socket.emit("backtesting", {
+    stock: stock.value,
+    model: model.value,
+    default_balance: defaultBalance.value,
+    start: start.value,
+    end: end.value
+  }, (status: boolean, msg: string, data: { name: string, value: number, actions: [] }) => {
+    if (!status) {
+      alert(`${msg}: ${data}`)
+      return
+    }
+    roi.value = data.value
+    actions.value = data.actions
+  })
 }
 
 </script>
@@ -45,7 +72,8 @@ const backtest = () => {
         </div>
         <div class="ts-select">
           <select v-model="model">
-            <option v-for="work in state.works" :value="work.id">{{ work.task_name }}({{ work.id.slice(0, 7) }})</option>
+            <option v-for="work in state.works.filter(_work => _work.status == 2 && state.tasks.find(task => task.name == _work.task_name))"
+                    :key="work.id" :value="work.id">{{ work.task_name }}({{ work.id.slice(0, 7) }})</option>
           </select>
         </div>
       </div>
@@ -92,6 +120,44 @@ const backtest = () => {
       </div>
     </div>
   </div>
+  <div class="ts-box u-top-spaced">
+    <table class="ts-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>action</th>
+          <th>trade</th>
+          <th>balance</th>
+          <th>hold</th>
+          <th>net</th>
+          <th>reward</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="action in actions" :key="action.date">
+          <td>{{ action.date }}</td>
+          <td>
+            <span v-if="action.trade == 0">
+              <span :data-tooltip="action.original_action">hold </span>
+              <del class="ts-text is-negative">({{ action.action }})</del>
+            </span>
+            <span :data-tooltip="action.original_action" v-else>{{ action.action }}</span>
+          </td>
+          <td>{{ action.trade }}</td>
+          <td>{{ action.balance }}</td>
+          <td>{{ action.hold }}</td>
+          <td>{{ action.net }}</td>
+          <td>{{ action.reward }}</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <th colspan="7">roi: {{ roi }}</th>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
 </template>
 
 <style>
