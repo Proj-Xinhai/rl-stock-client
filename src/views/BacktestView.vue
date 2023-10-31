@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { state, socket } from '@/socket'
+import Plotly from 'plotly.js-dist-min'
+import { template } from "@/ploty"
 
 const stock = ref<string>("")
 const start = ref<string>("")
@@ -42,8 +44,29 @@ const backtest = () => {
     }
     roi.value = data.value
     actions.value = data.actions
+    Plotly.react("backtest", [{
+      // type: "scattergl", // too many webgl context
+      x: actions.value.map(action => action.date),
+      y: actions.value.map(action => action.net),
+      mode: "lines"
+    }], {
+      title: data.name,
+      template: template
+    }, {})
   })
 }
+
+onMounted(() => {
+  Plotly.react("backtest", [{
+    // type: "scattergl", // too many webgl context
+    x: [],
+    y: [],
+    mode: "lines"
+  }], {
+    title: "?",
+    template: template
+  }, {})
+})
 
 </script>
 
@@ -120,6 +143,11 @@ const backtest = () => {
       </div>
     </div>
   </div>
+
+  <div class="ts-box u-top-spaced">
+    <div id="backtest"></div>
+  </div>
+
   <div class="ts-box u-top-spaced">
     <table class="ts-table">
       <thead>
@@ -152,7 +180,7 @@ const backtest = () => {
       </tbody>
       <tfoot>
         <tr>
-          <th colspan="7">roi: {{ roi }}</th>
+          <th colspan="7">roi: {{ isNaN(roi) ? "-" : roi }}, net: {{ isNaN(roi) ? "-" : actions[actions.length - 1].net }}</th>
         </tr>
       </tfoot>
     </table>
