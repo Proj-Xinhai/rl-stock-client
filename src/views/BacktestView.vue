@@ -9,6 +9,7 @@ const start = ref<string>("")
 const end = ref<string>("")
 const model = ref<string>("")
 const defaultBalance = ref<number>(<number><unknown>null)
+const deterministic = ref<boolean>(false)
 const mouseInTooltip = ref<boolean>(false)
 
 const roi = ref<number>(NaN)
@@ -24,6 +25,7 @@ const actions = ref<{
 }[]>([])
 
 const backtest = () => {
+  state.loading = true
   if (stock.value == "" || start.value == "" || end.value == "" || model.value == "" || !defaultBalance.value) return
   console.log(stock.value)
   console.log(start.value)
@@ -36,8 +38,10 @@ const backtest = () => {
     model: model.value,
     default_balance: defaultBalance.value,
     start: start.value,
-    end: end.value
+    end: end.value,
+    deterministic: deterministic.value
   }, (status: boolean, msg: string, data: { name: string, value: number, actions: [] }) => {
+    state.loading = false
     if (!status) {
       alert(`${msg}: ${data}`)
       return
@@ -137,7 +141,9 @@ onMounted(() => {
       </div>
       <div class="ts-grid is-top-aligned">
         <div class="column ts-wrap">
-          <button class="ts-button is-outlined" @click="">preload</button>
+          <button class="ts-button is-circular" :class="{ 'is-secondary': deterministic, 'is-outlined': !deterministic }" @click="deterministic = !deterministic">
+            {{ deterministic ? "deterministic" : "stochastic" }}
+          </button>
           <button class="ts-button" @click="backtest">backtest</button>
         </div>
       </div>
